@@ -14,6 +14,8 @@ const (
 	DoubleStyle BorderStyle = "double"
 	// MinimalStyle uses minimal borders
 	MinimalStyle BorderStyle = "minimal"
+	// MarkdownStyle uses Markdown table format
+	MarkdownStyle BorderStyle = "markdown"
 )
 
 // Predefined border character maps
@@ -87,6 +89,20 @@ var (
 		"left_cross":   " ",
 		"right_cross":  " ",
 	}
+
+	markdownBorders = map[string]string{
+		"horizontal":   "-",
+		"vertical":     "|",
+		"cross":        "|",
+		"top_left":     "",
+		"top_right":    "",
+		"bottom_left":  "",
+		"bottom_right": "",
+		"top_cross":    "|",
+		"bottom_cross": "|",
+		"left_cross":   "|",
+		"right_cross":  "|",
+	}
 )
 
 // getBorderChars returns border characters for the specified style
@@ -100,6 +116,8 @@ func getBorderChars(style BorderStyle) map[string]string {
 		return doubleBorders
 	case MinimalStyle:
 		return minimalBorders
+	case MarkdownStyle:
+		return markdownBorders
 	default: // BoxDrawingStyle
 		return boxDrawingBorders
 	}

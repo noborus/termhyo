@@ -38,8 +38,10 @@ func NewTableWithStyle(writer io.Writer, columns []Column, borderStyle BorderSty
 	// Determine render mode based on column configuration
 	t.mode = t.determineRenderMode()
 
-	// Set appropriate renderer based on mode
-	if t.mode == StreamingMode {
+	// Set appropriate renderer based on mode and style
+	if t.borderStyle == MarkdownStyle {
+		t.renderer = &MarkdownRenderer{}
+	} else if t.mode == StreamingMode {
 		t.renderer = &Streaming{}
 	} else {
 		t.renderer = &Buffered{}
@@ -98,12 +100,12 @@ func (t *Table) Render() error {
 func (t *Table) CalculateColumnWidths() {
 	for i, col := range t.columns {
 		if col.Width == 0 { // auto-width column
-			maxWidth := len(col.Title) // start with header width
+			maxWidth := stringWidth(col.Title) // start with header width
 
 			// Check all data rows
 			for _, row := range t.rows {
 				if i < len(row.Cells) {
-					contentWidth := len(row.Cells[i].Content)
+					contentWidth := stringWidth(row.Cells[i].Content)
 					if contentWidth > maxWidth {
 						maxWidth = contentWidth
 					}
@@ -181,26 +183,11 @@ func (t *Table) RenderRow(row Row) error {
 // formatCell formats cell content with alignment and padding
 func (t *Table) formatCell(content string, width int, align string) string {
 	// Truncate if too long
-	if len(content) > width {
-		if width > 3 {
-			content = content[:width-3] + "..."
-		} else {
-			content = content[:width]
-		}
+	if stringWidth(content) > width {
+		content = truncateString(content, width)
 	}
 
-	padding := width - len(content)
-
-	switch align {
-	case "right":
-		return strings.Repeat(" ", padding) + content
-	case "center":
-		leftPad := padding / 2
-		rightPad := padding - leftPad
-		return strings.Repeat(" ", leftPad) + content + strings.Repeat(" ", rightPad)
-	default: // left
-		return content + strings.Repeat(" ", padding)
-	}
+	return padString(content, width, align)
 }
 
 // RenderBorderLine renders horizontal border lines

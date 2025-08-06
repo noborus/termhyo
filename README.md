@@ -7,6 +7,7 @@
 - **Two rendering modes**: Flexible display with BufferedMode and StreamingMode
 - **Multiple border styles**: Choose from Box Drawing, ASCII, Rounded, Double, and Minimal
 - **Automatic width calculation**: Automatic column width adjustment and alignment
+- **Unicode support**: Proper handling of multibyte characters, combining characters, emojis, and East Asian text
 - **Interface design**: Extensible renderer architecture
 
 ## File Structure
@@ -18,11 +19,17 @@ termhyo/
 ├── column.go          # Column, Cell, Row definitions
 ├── borders.go         # Border style definitions
 ├── renderer.go        # Renderer interface and implementation
+├── markdown.go        # Markdown table renderer
+├── width.go           # String width calculation utilities
 ├── examples.go        # Usage examples
 └── examples/          # Runnable example programs
     ├── basic.go       # Basic table example
     ├── styles.go      # Border styles demonstration
-    └── streaming.go   # Streaming mode example
+    ├── streaming.go   # Streaming mode example
+    ├── japanese.go    # Japanese text example
+    ├── unicode.go     # Unicode and emoji example
+    ├── combining.go   # Combining characters example
+    └── markdown.go    # Markdown table format example
 ```
 
 ## Basic Usage
@@ -71,6 +78,18 @@ go run styles.go
 
 # Streaming mode demonstration
 go run streaming.go
+
+# Japanese text handling
+go run japanese.go
+
+# Unicode and emoji support
+go run unicode.go
+
+# Combining characters and complex Unicode
+go run combining.go
+
+# Markdown table format
+go run markdown.go
 ```
 
 ## Rendering Modes
@@ -94,6 +113,7 @@ go run streaming.go
 - `RoundedStyle`: Rounded corner style
 - `DoubleStyle`: Double line style
 - `MinimalStyle`: Minimal border
+- `MarkdownStyle`: Markdown table format
 
 ## License
 
