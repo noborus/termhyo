@@ -12,6 +12,7 @@ type BorderConfig struct {
 	DisableLeft     bool
 	DisableRight    bool
 	DisableVertical bool // Controls internal vertical separators
+	DisablePadding  bool // Controls content padding
 }
 
 const (
@@ -53,6 +54,7 @@ var (
 		DisableLeft:     false,
 		DisableRight:    false,
 		DisableVertical: false,
+		DisablePadding:  false,
 	}
 
 	asciiConfig = BorderConfig{
@@ -75,6 +77,7 @@ var (
 		DisableLeft:     false,
 		DisableRight:    false,
 		DisableVertical: false,
+		DisablePadding:  false,
 	}
 
 	roundedConfig = BorderConfig{
@@ -97,6 +100,7 @@ var (
 		DisableLeft:     false,
 		DisableRight:    false,
 		DisableVertical: false,
+		DisablePadding:  false,
 	}
 
 	doubleConfig = BorderConfig{
@@ -119,6 +123,7 @@ var (
 		DisableLeft:     false,
 		DisableRight:    false,
 		DisableVertical: false,
+		DisablePadding:  false,
 	}
 
 	minimalConfig = BorderConfig{
@@ -141,6 +146,7 @@ var (
 		DisableLeft:     true,
 		DisableRight:    true,
 		DisableVertical: true,
+		DisablePadding:  false,
 	}
 
 	markdownConfig = BorderConfig{
@@ -163,6 +169,7 @@ var (
 		DisableLeft:     false,
 		DisableRight:    false,
 		DisableVertical: false,
+		DisablePadding:  false,
 	}
 
 	tsvConfig = BorderConfig{
@@ -185,6 +192,7 @@ var (
 		DisableLeft:     true,
 		DisableRight:    true,
 		DisableVertical: false,
+		DisablePadding:  true, // TSVではパディングを無効化
 	}
 )
 

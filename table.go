@@ -102,12 +102,20 @@ func (t *Table) Render() error {
 
 // CalculateColumnWidths calculates optimal widths for auto-width columns
 func (t *Table) CalculateColumnWidths() {
+	const maxSampleRows = 100 // サンプリング行数を制限
+
 	for i, col := range t.columns {
 		if col.Width == 0 { // auto-width column
 			maxWidth := stringWidth(col.Title) // start with header width
 
-			// Check all data rows
-			for _, row := range t.rows {
+			// Check limited number of data rows for performance
+			sampleSize := len(t.rows)
+			if sampleSize > maxSampleRows {
+				sampleSize = maxSampleRows
+			}
+
+			for j := 0; j < sampleSize; j++ {
+				row := t.rows[j]
 				if i < len(row.Cells) {
 					contentWidth := stringWidth(row.Cells[i].Content)
 					if contentWidth > maxWidth {
@@ -116,7 +124,12 @@ func (t *Table) CalculateColumnWidths() {
 				}
 			}
 
-			// Apply max width limit if set
+			// Add padding to the calculated width (padding on both sides) only if padding is enabled
+			if !t.borderConfig.DisablePadding {
+				maxWidth += (t.padding * 2)
+			}
+
+			// Apply max width limit if set (after padding adjustment)
 			if col.MaxWidth > 0 && maxWidth > col.MaxWidth {
 				maxWidth = col.MaxWidth
 			}
@@ -183,7 +196,18 @@ func (t *Table) RenderRow(row Row) error {
 			}
 		} else {
 			if !col.NoAlign {
-				content = strings.Repeat(" ", col.Width)
+				if t.borderConfig.DisablePadding {
+					// No padding for empty cells
+					content = strings.Repeat(" ", col.Width)
+				} else {
+					// Empty cell with padding
+					paddingStr := strings.Repeat(" ", t.padding)
+					effectiveWidth := col.Width - (t.padding * 2)
+					if effectiveWidth < 0 {
+						effectiveWidth = 0
+					}
+					content = paddingStr + strings.Repeat(" ", effectiveWidth) + paddingStr
+				}
 			}
 		}
 
@@ -207,12 +231,32 @@ func (t *Table) RenderRow(row Row) error {
 
 // formatCell formats cell content with alignment and padding
 func (t *Table) formatCell(content string, width int, align string) string {
-	// Truncate if too long
-	if stringWidth(content) > width {
-		content = truncateString(content, width)
+	// Check if padding is disabled for this border style
+	if t.borderConfig.DisablePadding {
+		// No padding, use original behavior
+		if stringWidth(content) > width {
+			content = truncateString(content, width)
+		}
+		return padString(content, width, align)
 	}
 
-	return padString(content, width, align)
+	// Calculate effective width (subtract padding from both sides)
+	effectiveWidth := width - (t.padding * 2)
+	if effectiveWidth < 0 {
+		effectiveWidth = 0
+	}
+
+	// Truncate if too long for effective width
+	if stringWidth(content) > effectiveWidth {
+		content = truncateString(content, effectiveWidth)
+	}
+
+	// Apply alignment to effective width
+	paddedContent := padString(content, effectiveWidth, align)
+
+	// Add padding spaces on both sides
+	paddingStr := strings.Repeat(" ", t.padding)
+	return paddingStr + paddedContent + paddingStr
 }
 
 // RenderBorderLine renders horizontal border lines
