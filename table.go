@@ -7,12 +7,13 @@ import (
 
 // Table represents the main table structure
 type Table struct {
-	columns     []Column
-	rows        []Row
-	writer      io.Writer
-	mode        RenderMode
-	renderer    Renderer
-	borderStyle BorderStyle
+	columns      []Column
+	rows         []Row
+	writer       io.Writer
+	mode         RenderMode
+	renderer     Renderer
+	borderStyle  BorderStyle
+	borderConfig BorderConfig
 
 	// Style configuration
 	borders map[string]string
@@ -26,13 +27,16 @@ func NewTable(writer io.Writer, columns []Column) *Table {
 
 // NewTableWithStyle creates a new table with specified border style
 func NewTableWithStyle(writer io.Writer, columns []Column, borderStyle BorderStyle) *Table {
+	borderConfig := getBorderConfig(borderStyle)
+
 	t := &Table{
-		columns:     columns,
-		writer:      writer,
-		rows:        make([]Row, 0),
-		padding:     1,
-		borderStyle: borderStyle,
-		borders:     getBorderChars(borderStyle),
+		columns:      columns,
+		writer:       writer,
+		rows:         make([]Row, 0),
+		padding:      1,
+		borderStyle:  borderStyle,
+		borderConfig: borderConfig,
+		borders:      borderConfig.Chars,
 	}
 
 	// Determine render mode based on column configuration
@@ -124,9 +128,11 @@ func (t *Table) CalculateColumnWidths() {
 
 // RenderHeader renders the table header
 func (t *Table) RenderHeader() error {
-	// Top border
-	if err := t.RenderBorderLine("top"); err != nil {
-		return err
+	// Top border (only if enabled)
+	if !t.borderConfig.DisableTop {
+		if err := t.RenderBorderLine("top"); err != nil {
+			return err
+		}
 	}
 
 	// Header row
@@ -144,13 +150,22 @@ func (t *Table) RenderHeader() error {
 		return err
 	}
 
-	// Header separator
-	return t.RenderBorderLine("middle")
+	// Header separator (only if enabled)
+	if !t.borderConfig.DisableMiddle {
+		return t.RenderBorderLine("middle")
+	}
+
+	return nil
 }
 
 // RenderRow renders a single row
 func (t *Table) RenderRow(row Row) error {
-	line := t.borders["vertical"]
+	var line string
+
+	// Left border (only if enabled)
+	if !t.borderConfig.DisableLeft {
+		line = t.borders["vertical"]
+	}
 
 	for i, col := range t.columns {
 		var content string
@@ -172,7 +187,17 @@ func (t *Table) RenderRow(row Row) error {
 			}
 		}
 
-		line += content + t.borders["vertical"]
+		line += content
+
+		// Add vertical separator between columns (only if enabled and not the last column)
+		if !t.borderConfig.DisableVertical && i < len(t.columns)-1 {
+			line += t.borders["vertical"]
+		}
+	}
+
+	// Right border (only if enabled)
+	if !t.borderConfig.DisableRight {
+		line += t.borders["vertical"]
 	}
 
 	line += "\n"
@@ -234,7 +259,11 @@ func (t *Table) RenderBorderLine(position string) error {
 
 // RenderFooter renders the table footer
 func (t *Table) RenderFooter() error {
-	return t.RenderBorderLine("bottom")
+	// Bottom border (only if enabled)
+	if !t.borderConfig.DisableBottom {
+		return t.RenderBorderLine("bottom")
+	}
+	return nil
 }
 
 // SetRenderer allows setting a custom renderer
@@ -245,10 +274,22 @@ func (t *Table) SetRenderer(renderer Renderer) {
 // SetBorderStyle changes the border style of the table
 func (t *Table) SetBorderStyle(style BorderStyle) {
 	t.borderStyle = style
-	t.borders = getBorderChars(style)
+	t.borderConfig = getBorderConfig(style)
+	t.borders = t.borderConfig.Chars
 }
 
 // GetBorderStyle returns the current border style
 func (t *Table) GetBorderStyle() BorderStyle {
 	return t.borderStyle
+}
+
+// SetBorderConfig allows setting a custom border configuration
+func (t *Table) SetBorderConfig(config BorderConfig) {
+	t.borderConfig = config
+	t.borders = config.Chars
+}
+
+// GetBorderConfig returns the current border configuration
+func (t *Table) GetBorderConfig() BorderConfig {
+	return t.borderConfig
 }

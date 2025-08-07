@@ -3,6 +3,17 @@ package termhyo
 // BorderStyle defines different border styles
 type BorderStyle string
 
+// BorderConfig holds border style configuration
+type BorderConfig struct {
+	Chars           map[string]string
+	DisableTop      bool
+	DisableBottom   bool
+	DisableMiddle   bool
+	DisableLeft     bool
+	DisableRight    bool
+	DisableVertical bool // Controls internal vertical separators
+}
+
 const (
 	// BoxDrawingStyle uses Unicode box drawing characters
 	BoxDrawingStyle BorderStyle = "box"
@@ -16,109 +27,188 @@ const (
 	MinimalStyle BorderStyle = "minimal"
 	// MarkdownStyle uses Markdown table format
 	MarkdownStyle BorderStyle = "markdown"
+	// TSVStyle uses tab separators only
+	TSVStyle BorderStyle = "tsv"
 )
 
-// Predefined border character maps
+// Predefined border configurations
 var (
-	boxDrawingBorders = map[string]string{
-		"horizontal":   "─",
-		"vertical":     "│",
-		"cross":        "┼",
-		"top_left":     "┌",
-		"top_right":    "┐",
-		"bottom_left":  "└",
-		"bottom_right": "┘",
-		"top_cross":    "┬",
-		"bottom_cross": "┴",
-		"left_cross":   "├",
-		"right_cross":  "┤",
+	boxDrawingConfig = BorderConfig{
+		Chars: map[string]string{
+			"horizontal":   "─",
+			"vertical":     "│",
+			"cross":        "┼",
+			"top_left":     "┌",
+			"top_right":    "┐",
+			"bottom_left":  "└",
+			"bottom_right": "┘",
+			"top_cross":    "┬",
+			"bottom_cross": "┴",
+			"left_cross":   "├",
+			"right_cross":  "┤",
+		},
+		DisableTop:      false,
+		DisableBottom:   false,
+		DisableMiddle:   false,
+		DisableLeft:     false,
+		DisableRight:    false,
+		DisableVertical: false,
 	}
 
-	asciiBorders = map[string]string{
-		"horizontal":   "-",
-		"vertical":     "|",
-		"cross":        "+",
-		"top_left":     "+",
-		"top_right":    "+",
-		"bottom_left":  "+",
-		"bottom_right": "+",
-		"top_cross":    "+",
-		"bottom_cross": "+",
-		"left_cross":   "+",
-		"right_cross":  "+",
+	asciiConfig = BorderConfig{
+		Chars: map[string]string{
+			"horizontal":   "-",
+			"vertical":     "|",
+			"cross":        "+",
+			"top_left":     "+",
+			"top_right":    "+",
+			"bottom_left":  "+",
+			"bottom_right": "+",
+			"top_cross":    "+",
+			"bottom_cross": "+",
+			"left_cross":   "+",
+			"right_cross":  "+",
+		},
+		DisableTop:      false,
+		DisableBottom:   false,
+		DisableMiddle:   false,
+		DisableLeft:     false,
+		DisableRight:    false,
+		DisableVertical: false,
 	}
 
-	roundedBorders = map[string]string{
-		"horizontal":   "─",
-		"vertical":     "│",
-		"cross":        "┼",
-		"top_left":     "╭",
-		"top_right":    "╮",
-		"bottom_left":  "╰",
-		"bottom_right": "╯",
-		"top_cross":    "┬",
-		"bottom_cross": "┴",
-		"left_cross":   "├",
-		"right_cross":  "┤",
+	roundedConfig = BorderConfig{
+		Chars: map[string]string{
+			"horizontal":   "─",
+			"vertical":     "│",
+			"cross":        "┼",
+			"top_left":     "╭",
+			"top_right":    "╮",
+			"bottom_left":  "╰",
+			"bottom_right": "╯",
+			"top_cross":    "┬",
+			"bottom_cross": "┴",
+			"left_cross":   "├",
+			"right_cross":  "┤",
+		},
+		DisableTop:      false,
+		DisableBottom:   false,
+		DisableMiddle:   false,
+		DisableLeft:     false,
+		DisableRight:    false,
+		DisableVertical: false,
 	}
 
-	doubleBorders = map[string]string{
-		"horizontal":   "═",
-		"vertical":     "║",
-		"cross":        "╬",
-		"top_left":     "╔",
-		"top_right":    "╗",
-		"bottom_left":  "╚",
-		"bottom_right": "╝",
-		"top_cross":    "╦",
-		"bottom_cross": "╩",
-		"left_cross":   "╠",
-		"right_cross":  "╣",
+	doubleConfig = BorderConfig{
+		Chars: map[string]string{
+			"horizontal":   "═",
+			"vertical":     "║",
+			"cross":        "╬",
+			"top_left":     "╔",
+			"top_right":    "╗",
+			"bottom_left":  "╚",
+			"bottom_right": "╝",
+			"top_cross":    "╦",
+			"bottom_cross": "╩",
+			"left_cross":   "╠",
+			"right_cross":  "╣",
+		},
+		DisableTop:      false,
+		DisableBottom:   false,
+		DisableMiddle:   false,
+		DisableLeft:     false,
+		DisableRight:    false,
+		DisableVertical: false,
 	}
 
-	minimalBorders = map[string]string{
-		"horizontal":   " ",
-		"vertical":     " ",
-		"cross":        " ",
-		"top_left":     " ",
-		"top_right":    " ",
-		"bottom_left":  " ",
-		"bottom_right": " ",
-		"top_cross":    " ",
-		"bottom_cross": " ",
-		"left_cross":   " ",
-		"right_cross":  " ",
+	minimalConfig = BorderConfig{
+		Chars: map[string]string{
+			"horizontal":   " ",
+			"vertical":     " ",
+			"cross":        " ",
+			"top_left":     " ",
+			"top_right":    " ",
+			"bottom_left":  " ",
+			"bottom_right": " ",
+			"top_cross":    " ",
+			"bottom_cross": " ",
+			"left_cross":   " ",
+			"right_cross":  " ",
+		},
+		DisableTop:      true,
+		DisableBottom:   true,
+		DisableMiddle:   true,
+		DisableLeft:     true,
+		DisableRight:    true,
+		DisableVertical: true,
 	}
 
-	markdownBorders = map[string]string{
-		"horizontal":   "-",
-		"vertical":     "|",
-		"cross":        "|",
-		"top_left":     "",
-		"top_right":    "",
-		"bottom_left":  "",
-		"bottom_right": "",
-		"top_cross":    "|",
-		"bottom_cross": "|",
-		"left_cross":   "|",
-		"right_cross":  "|",
+	markdownConfig = BorderConfig{
+		Chars: map[string]string{
+			"horizontal":   "-",
+			"vertical":     "|",
+			"cross":        "|",
+			"top_left":     "",
+			"top_right":    "",
+			"bottom_left":  "",
+			"bottom_right": "",
+			"top_cross":    "|",
+			"bottom_cross": "|",
+			"left_cross":   "|",
+			"right_cross":  "|",
+		},
+		DisableTop:      true,
+		DisableBottom:   true,
+		DisableMiddle:   false,
+		DisableLeft:     false,
+		DisableRight:    false,
+		DisableVertical: false,
+	}
+
+	tsvConfig = BorderConfig{
+		Chars: map[string]string{
+			"horizontal":   "",
+			"vertical":     "\t",
+			"cross":        "",
+			"top_left":     "",
+			"top_right":    "",
+			"bottom_left":  "",
+			"bottom_right": "",
+			"top_cross":    "",
+			"bottom_cross": "",
+			"left_cross":   "",
+			"right_cross":  "",
+		},
+		DisableTop:      true,
+		DisableBottom:   true,
+		DisableMiddle:   true,
+		DisableLeft:     true,
+		DisableRight:    true,
+		DisableVertical: false,
 	}
 )
 
-// getBorderChars returns border characters for the specified style
-func getBorderChars(style BorderStyle) map[string]string {
+// getBorderConfig returns border configuration for the specified style
+func getBorderConfig(style BorderStyle) BorderConfig {
 	switch style {
 	case ASCIIStyle:
-		return asciiBorders
+		return asciiConfig
 	case RoundedStyle:
-		return roundedBorders
+		return roundedConfig
 	case DoubleStyle:
-		return doubleBorders
+		return doubleConfig
 	case MinimalStyle:
-		return minimalBorders
+		return minimalConfig
 	case MarkdownStyle:
-		return markdownBorders
+		return markdownConfig
+	case TSVStyle:
+		return tsvConfig
 	default: // BoxDrawingStyle
-		return boxDrawingBorders
+		return boxDrawingConfig
 	}
+}
+
+// getBorderChars returns border characters for the specified style (for backward compatibility)
+func getBorderChars(style BorderStyle) map[string]string {
+	return getBorderConfig(style).Chars
 }

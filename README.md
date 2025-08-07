@@ -29,7 +29,8 @@ termhyo/
     ├── japanese.go    # Japanese text example
     ├── unicode.go     # Unicode and emoji example
     ├── combining.go   # Combining characters example
-    └── markdown.go    # Markdown table format example
+    ├── markdown.go    # Markdown table format example
+    └── custom_borders.go # Custom border configuration example
 ```
 
 ## Basic Usage
@@ -64,6 +65,28 @@ func main() {
 table := termhyo.NewTableWithStyle(os.Stdout, columns, termhyo.ASCIIStyle)
 ```
 
+### Custom Border Configuration
+
+```go
+// Create custom border configuration
+customConfig := termhyo.BorderConfig{
+    Chars: map[string]string{
+        "horizontal": "=",
+        "vertical":   "|",
+        "cross":      "+",
+        // ... other border characters
+    },
+    DisableTop:     true,   // No top border
+    DisableBottom:  true,   // No bottom border
+    DisableMiddle:  false,  // Keep header separator
+    DisableLeft:    true,   // No left border
+    DisableRight:   true,   // No right border
+    DisableVertical: false, // Keep internal column separators
+}
+
+table.SetBorderConfig(customConfig)
+```
+
 ## Running Examples
 
 You can run the example programs to see termhyo in action:
@@ -90,6 +113,9 @@ go run combining.go
 
 # Markdown table format
 go run markdown.go
+
+# Custom border configurations
+go run custom_borders.go
 ```
 
 ## Rendering Modes
@@ -114,6 +140,7 @@ go run markdown.go
 - `DoubleStyle`: Double line style
 - `MinimalStyle`: Minimal border
 - `MarkdownStyle`: Markdown table format
+- `TSVStyle`: Tab-separated values format
 
 ## License
 
