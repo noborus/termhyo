@@ -169,7 +169,7 @@ var (
 		DisableLeft:     false,
 		DisableRight:    false,
 		DisableVertical: false,
-		DisablePadding:  false,
+		DisablePadding:  false, // 共通のパディング機能を使用
 	}
 
 	tsvConfig = BorderConfig{

@@ -64,8 +64,8 @@ func (r *MarkdownRenderer) renderMarkdownHeader() error {
 
 	for _, col := range r.table.columns {
 		// Apply alignment to header content (headers are typically centered)
-		content := r.formatMarkdownCell(col.Title, col.Width, "center")
-		line += " " + content + " |"
+		content := r.table.formatCell(col.Title, col.Width, "center")
+		line += content + "|"
 	}
 
 	line += "\n"
@@ -99,11 +99,11 @@ func (r *MarkdownRenderer) renderMarkdownRow(row Row) error {
 			if row.Cells[i].Align != "" {
 				cellAlign = row.Cells[i].Align // Cell-specific alignment overrides column alignment
 			}
-			content = r.formatMarkdownCell(row.Cells[i].Content, col.Width, cellAlign)
+			content = r.table.formatCell(row.Cells[i].Content, col.Width, cellAlign)
 		} else {
-			content = r.formatMarkdownCell("", col.Width, col.Align)
+			content = r.table.formatCell("", col.Width, col.Align)
 		}
-		line += " " + content + " |"
+		line += content + "|"
 	}
 
 	line += "\n"
