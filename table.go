@@ -320,6 +320,11 @@ func (t *Table) SetBorderStyle(style BorderStyle) {
 	t.borderStyle = style
 	t.borderConfig = getBorderConfig(style)
 	t.borders = t.borderConfig.Chars
+
+	// Set appropriate renderer for Markdown style
+	if style == MarkdownStyle {
+		t.renderer = &MarkdownRenderer{}
+	}
 }
 
 // GetBorderStyle returns the current border style

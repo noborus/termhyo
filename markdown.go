@@ -78,7 +78,7 @@ func (r *MarkdownRenderer) renderMarkdownSeparator() error {
 	line := "|"
 
 	for _, col := range r.table.columns {
-		separator := r.getAlignmentSeparator(col.Align, col.Width+2) // +2 for proper alignment
+		separator := r.getAlignmentSeparator(col.Align, col.Width)
 		line += separator + "|"
 	}
 
@@ -113,30 +113,18 @@ func (r *MarkdownRenderer) renderMarkdownRow(row Row) error {
 
 // getAlignmentSeparator returns the separator string with alignment indicators
 func (r *MarkdownRenderer) getAlignmentSeparator(align string, width int) string {
-	// Use at least 2 characters for proper alignment indicators
-	minWidth := 2
-	actualWidth := width
-	if actualWidth < minWidth {
-		actualWidth = minWidth
-	}
-
 	switch align {
 	case "right":
-		return strings.Repeat("-", actualWidth-1) + ":"
+		if width <= 1 {
+			return ":"
+		}
+		return strings.Repeat("-", width-1) + ":"
 	case "center":
-		return ":" + strings.Repeat("-", actualWidth-2) + ":"
+		if width <= 2 {
+			return "::"
+		}
+		return ":" + strings.Repeat("-", width-2) + ":"
 	default: // left or no alignment
-		return strings.Repeat("-", actualWidth)
+		return strings.Repeat("-", width)
 	}
-}
-
-// formatMarkdownCell formats cell content with alignment and padding for Markdown
-func (r *MarkdownRenderer) formatMarkdownCell(content string, width int, align string) string {
-	// Truncate if too long
-	if stringWidth(content) > width {
-		content = truncateString(content, width)
-	}
-
-	// Pad according to alignment
-	return padString(content, width, align)
 }
