@@ -102,7 +102,7 @@ func (t *Table) Render() error {
 
 // CalculateColumnWidths calculates optimal widths for auto-width columns
 func (t *Table) CalculateColumnWidths() {
-	const maxSampleRows = 100 // サンプリング行数を制限
+	const maxSampleRows = 100 // Limit sampling rows for performance
 
 	for i, col := range t.columns {
 		if col.Width == 0 { // auto-width column
@@ -320,11 +320,6 @@ func (t *Table) SetBorderStyle(style BorderStyle) {
 	t.borderStyle = style
 	t.borderConfig = getBorderConfig(style)
 	t.borders = t.borderConfig.Chars
-
-	// Set appropriate renderer for Markdown style
-	if style == MarkdownStyle {
-		t.renderer = &MarkdownRenderer{}
-	}
 }
 
 // GetBorderStyle returns the current border style

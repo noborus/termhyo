@@ -169,7 +169,7 @@ var (
 		DisableLeft:     false,
 		DisableRight:    false,
 		DisableVertical: false,
-		DisablePadding:  false, // 共通のパディング機能を使用
+		DisablePadding:  false, // Use common padding functionality
 	}
 
 	tsvConfig = BorderConfig{
@@ -192,7 +192,7 @@ var (
 		DisableLeft:     true,
 		DisableRight:    true,
 		DisableVertical: false,
-		DisablePadding:  true, // TSVではパディングを無効化
+		DisablePadding:  true, // Disable padding for TSV format
 	}
 )
 
