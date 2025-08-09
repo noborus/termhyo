@@ -7,7 +7,6 @@ type Column struct {
 	Width    int    // 0 means auto-width
 	MaxWidth int    // maximum width for auto-width columns
 	Align    string // "left", "right", "center"
-	NoAlign  bool   // skip alignment entirely
 }
 
 // Cell represents a table cell

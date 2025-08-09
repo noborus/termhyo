@@ -7,25 +7,31 @@ import (
 )
 
 func main() {
-	// Define columns with alignment
+	// Define columns with fixed width for streaming Markdown
 	columns := []termhyo.Column{
-		{Title: "ID", Width: 0, Align: "right"},
-		{Title: "Name", Width: 0, Align: "left"},
-		{Title: "Score", Width: 0, Align: "center"},
-		{Title: "Grade", Width: 0, Align: "center"},
-		{Title: "Comment", Width: 0, Align: "left"},
+		{Title: "Time", Width: 10, Align: "left"},
+		{Title: "Event", Width: 20, Align: "left"},
+		{Title: "Status", Width: 8, Align: "center"},
 	}
 
 	// Create table with Markdown style
 	table := termhyo.NewTableWithStyle(os.Stdout, columns, termhyo.MarkdownStyle)
+	table.SetNoAlign(true) // Disable alignment for streaming mode
+	// Simulate real-time data streaming in Markdown format
+	events := [][]string{
+		{"09:00:00", "System startup", "OK"},
+		{"09:00:15", "Loading config", "OK"},
+		{"09:00:30", "Database connect", "OK"},
+		{"09:00:45", "Cache warming", "OK"},
+		{"09:01:00", "Service ready", "OK"},
+	}
 
-	// Add sample data
-	table.AddRow("1", "Alice Johnson", "95", "A", "Excellent work")
-	table.AddRow("2", "Bob Smith", "87", "B", "Good performance")
-	table.AddRow("3", "Charlie Brown", "92", "A", "Very good")
-	table.AddRow("4", "Diana Prince", "88", "B", "Solid effort")
-	table.AddRow("5", "Edward Norton", "91", "A", "Outstanding")
+	for _, event := range events {
+		table.AddRow(event...)
+		// Simulate delay between events
+		//time.Sleep(500 * time.Millisecond)
+	}
 
-	// Render the table
+	// Complete the table
 	table.Render()
 }

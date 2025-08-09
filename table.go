@@ -14,10 +14,37 @@ type Table struct {
 	renderer     Renderer
 	borderStyle  BorderStyle
 	borderConfig BorderConfig
+	noAlign      bool // skip alignment entirely for all columns
 
 	// Style configuration
 	borders map[string]string
 	padding int
+}
+
+// GetBorderConfig returns the current border configuration
+func (t *Table) GetBorderConfig() BorderConfig {
+	return t.borderConfig
+}
+
+// SetNoAlign sets whether to skip alignment for all columns
+func (t *Table) SetNoAlign(noAlign bool) {
+	t.noAlign = noAlign
+	// Recalculate render mode when alignment setting changes
+	t.mode = t.determineRenderMode()
+
+	// Update renderer based on new mode
+	if t.borderStyle == MarkdownStyle {
+		t.renderer = &MarkdownRenderer{}
+	} else if t.mode == StreamingMode {
+		t.renderer = &Streaming{}
+	} else {
+		t.renderer = &Buffered{}
+	}
+}
+
+// GetNoAlign returns the current no-align setting
+func (t *Table) GetNoAlign() bool {
+	return t.noAlign
 }
 
 // NewTable creates a new table
@@ -57,19 +84,16 @@ func NewTableWithStyle(writer io.Writer, columns []Column, borderStyle BorderSty
 // determineRenderMode decides whether to use buffered or streaming mode
 func (t *Table) determineRenderMode() RenderMode {
 	hasAutoWidth := false
-	hasAlignment := false
 
 	for _, col := range t.columns {
 		if col.Width == 0 {
 			hasAutoWidth = true
-		}
-		if !col.NoAlign {
-			hasAlignment = true
+			break
 		}
 	}
 
-	// Use streaming mode only if all widths are fixed and no alignment needed
-	if !hasAutoWidth && !hasAlignment {
+	// Use streaming mode if no auto-width calculation needed OR no alignment needed
+	if !hasAutoWidth || t.noAlign {
 		return StreamingMode
 	}
 
@@ -102,40 +126,50 @@ func (t *Table) Render() error {
 
 // CalculateColumnWidths calculates optimal widths for auto-width columns
 func (t *Table) CalculateColumnWidths() {
-	const maxSampleRows = 100 // Limit sampling rows for performance
-
+	// Early return if no auto-width columns
+	autoWidthColumns := make([]int, 0, len(t.columns)) // Track auto-width column indices
 	for i, col := range t.columns {
-		if col.Width == 0 { // auto-width column
-			maxWidth := stringWidth(col.Title) // start with header width
+		if col.Width == 0 {
+			autoWidthColumns = append(autoWidthColumns, i)
+		}
+	}
+	if len(autoWidthColumns) == 0 {
+		return // All columns have fixed widths, no calculation needed
+	}
 
-			// Check limited number of data rows for performance
-			sampleSize := len(t.rows)
-			if sampleSize > maxSampleRows {
-				sampleSize = maxSampleRows
-			}
+	// Initialize max widths with header widths for auto-width columns
+	maxWidths := make([]int, len(t.columns))
+	for _, colIndex := range autoWidthColumns {
+		maxWidths[colIndex] = stringWidth(t.columns[colIndex].Title)
+	}
 
-			for j := 0; j < sampleSize; j++ {
-				row := t.rows[j]
-				if i < len(row.Cells) {
-					contentWidth := stringWidth(row.Cells[i].Content)
-					if contentWidth > maxWidth {
-						maxWidth = contentWidth
-					}
+	// Check all data rows for accurate width calculation (row-oriented for better cache efficiency)
+	for _, row := range t.rows {
+		for _, colIndex := range autoWidthColumns { // Only process auto-width columns
+			if colIndex < len(row.Cells) {
+				contentWidth := stringWidth(row.Cells[colIndex].Content)
+				if contentWidth > maxWidths[colIndex] {
+					maxWidths[colIndex] = contentWidth
 				}
 			}
-
-			// Add padding to the calculated width (padding on both sides) only if padding is enabled
-			if !t.borderConfig.DisablePadding {
-				maxWidth += (t.padding * 2)
-			}
-
-			// Apply max width limit if set (after padding adjustment)
-			if col.MaxWidth > 0 && maxWidth > col.MaxWidth {
-				maxWidth = col.MaxWidth
-			}
-
-			t.columns[i].Width = maxWidth
 		}
+	}
+
+	// Apply final width calculations
+	for _, colIndex := range autoWidthColumns {
+		maxWidth := maxWidths[colIndex]
+
+		// Add padding to the calculated width (padding on both sides) only if padding is enabled
+		if !t.borderConfig.DisablePadding {
+			maxWidth += (t.padding * 2)
+		}
+
+		// Apply max width limit if set (after padding adjustment)
+		if t.columns[colIndex].MaxWidth > 0 && maxWidth > t.columns[colIndex].MaxWidth {
+			maxWidth = t.columns[colIndex].MaxWidth
+		}
+
+		t.columns[colIndex].Width = maxWidth
 	}
 }
 
@@ -187,7 +221,7 @@ func (t *Table) RenderRow(row Row) error {
 			content = cell.Content
 
 			// Apply alignment if not disabled
-			if !col.NoAlign {
+			if !t.noAlign {
 				align := col.Align
 				if cell.Align != "" {
 					align = cell.Align
@@ -195,7 +229,7 @@ func (t *Table) RenderRow(row Row) error {
 				content = t.formatCell(content, col.Width, align)
 			}
 		} else {
-			if !col.NoAlign {
+			if !t.noAlign {
 				if t.borderConfig.DisablePadding {
 					// No padding for empty cells
 					content = strings.Repeat(" ", col.Width)
@@ -331,9 +365,4 @@ func (t *Table) GetBorderStyle() BorderStyle {
 func (t *Table) SetBorderConfig(config BorderConfig) {
 	t.borderConfig = config
 	t.borders = config.Chars
-}
-
-// GetBorderConfig returns the current border configuration
-func (t *Table) GetBorderConfig() BorderConfig {
-	return t.borderConfig
 }

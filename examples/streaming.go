@@ -10,13 +10,16 @@ import (
 func main() {
 	// Define columns with fixed width for streaming mode
 	columns := []termhyo.Column{
-		{Title: "Time", Width: 8, Align: ""},
-		{Title: "Event", Width: 20, Align: ""},
-		{Title: "Status", Width: 10, Align: ""},
+		{Title: "Time", Width: 10},
+		{Title: "Event", Width: 20},
+		{Title: "Status", Width: 8},
 	}
 
 	// Create table with fixed width (enables streaming mode)
-	table := termhyo.NewTable(os.Stdout, columns)
+	table := termhyo.NewTableWithStyle(os.Stdout, columns, termhyo.ASCIIStyle)
+
+	// Disable alignment for streaming mode using Table-level setting
+	//table.SetNoAlign(true)
 
 	// Simulate real-time data streaming
 	events := [][]string{
@@ -32,4 +35,7 @@ func main() {
 		// Simulate delay between events
 		time.Sleep(500 * time.Millisecond)
 	}
+
+	// Render footer to complete the table
+	table.Render()
 }
