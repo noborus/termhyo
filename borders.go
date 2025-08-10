@@ -215,8 +215,3 @@ func getBorderConfig(style BorderStyle) BorderConfig {
 		return boxDrawingConfig
 	}
 }
-
-// getBorderChars returns border characters for the specified style (for backward compatibility)
-func getBorderChars(style BorderStyle) map[string]string {
-	return getBorderConfig(style).Chars
-}

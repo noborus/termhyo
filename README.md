@@ -1,5 +1,10 @@
 # termhyo
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/noborus/termhyo.svg)](https://pkg.go.dev/github.com/noborus/termhyo)
+[![Go Report Card](https://goreportcard.com/badge/github.com/noborus/termhyo)](https://goreportcard.com/report/github.com/noborus/termhyo)
+[![GitHub release](https://img.shields.io/github/release/noborus/termhyo.svg)](https://github.com/noborus/termhyo/releases)
+[![License](https://img.shields.io/github/license/noborus/termhyo.svg)](LICENSE)
+
 `termhyo` is a Go package for beautifully displaying tabular data. The name combines "terminal" and the Japanese word "表 (hyo)" meaning "table", and is specialized for terminal display.
 
 ## Features
@@ -10,27 +15,47 @@
 - **Unicode support**: Proper handling of multibyte characters, combining characters, emojis, and East Asian text
 - **Interface design**: Extensible renderer architecture
 
+## Installation
+
+To install termhyo, use `go get`:
+
+```bash
+go get github.com/noborus/termhyo
+```
+
+### Requirements
+
+- Go 1.21 or later
+
 ## File Structure
 
 ```tree
 termhyo/
-├── writer.go          # Package documentation and main entry point
+├── termhyo.go         # Package documentation and main entry point
 ├── table.go           # Table struct and main logic
 ├── column.go          # Column, Cell, Row definitions
 ├── borders.go         # Border style definitions
 ├── renderer.go        # Renderer interface and implementation
 ├── markdown.go        # Markdown table renderer
+├── header_styles.go   # Header styling with ANSI escape sequences
 ├── width.go           # String width calculation utilities
-├── examples.go        # Usage examples
 └── examples/          # Runnable example programs
-    ├── basic.go       # Basic table example
-    ├── styles.go      # Border styles demonstration
-    ├── streaming.go   # Streaming mode example
-    ├── japanese.go    # Japanese text example
-    ├── unicode.go     # Unicode and emoji example
-    ├── combining.go   # Combining characters example
-    ├── markdown.go    # Markdown table format example
-    └── custom_borders.go # Custom border configuration example
+    ├── basic/         # Basic table example
+    │   └── main.go
+    ├── header_styles/ # Header styling demonstration
+    │   └── main.go
+    ├── streaming/     # Streaming mode example
+    │   └── main.go
+    ├── japanese/      # Japanese text example
+    │   └── main.go
+    ├── unicode/       # Unicode and emoji example
+    │   └── main.go
+    ├── combining/     # Combining characters example
+    │   └── main.go
+    ├── markdown/      # Markdown table format example
+    │   └── main.go
+    └── custom_borders/ # Custom border configuration example
+        └── main.go
 ```
 
 ## Basic Usage
