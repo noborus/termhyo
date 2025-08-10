@@ -81,7 +81,17 @@ func (r *MarkdownRenderer) IsRendered() bool {
 
 // renderMarkdownHeader renders the header row in Markdown format
 func (r *MarkdownRenderer) renderMarkdownHeader(table *Table) error {
-	line := "|"
+	var line string
+	var stylePrefix, styleSuffix string
+
+	// Apply header style to the entire line if configured
+	if !table.headerStyle.isEmpty() {
+		stylePrefix = table.headerStyle.getPrefix()
+		styleSuffix = table.headerStyle.getSuffix()
+	}
+
+	// Start the line with style prefix
+	line = stylePrefix + "|"
 
 	for _, col := range table.columns {
 		// Apply alignment to header content (headers are typically centered)
@@ -89,7 +99,8 @@ func (r *MarkdownRenderer) renderMarkdownHeader(table *Table) error {
 		line += content + "|"
 	}
 
-	line += "\n"
+	// End the line with style suffix
+	line += styleSuffix + "\n"
 	_, err := table.writer.Write([]byte(line))
 	return err
 }

@@ -17,8 +17,9 @@ type Table struct {
 	noAlign      bool // skip alignment entirely for all columns
 
 	// Style configuration
-	borders map[string]string
-	padding int
+	borders     map[string]string
+	padding     int
+	headerStyle HeaderStyle // styling for header row
 }
 
 // GetBorderConfig returns the current border configuration
@@ -193,7 +194,8 @@ func (t *Table) RenderHeader() error {
 		}
 	}
 
-	if err := t.RenderRow(headerRow); err != nil {
+	// Use specialized header row rendering
+	if err := t.RenderHeaderRow(headerRow); err != nil {
 		return err
 	}
 
@@ -203,6 +205,76 @@ func (t *Table) RenderHeader() error {
 	}
 
 	return nil
+}
+
+// RenderHeaderRow renders a header row with full-line styling
+func (t *Table) RenderHeaderRow(row Row) error {
+	var line string
+	var stylePrefix, styleSuffix string
+
+	// Apply header style to the entire line if configured
+	if !t.headerStyle.isEmpty() {
+		stylePrefix = t.headerStyle.getPrefix()
+		styleSuffix = t.headerStyle.getSuffix()
+	}
+
+	// Start the line with style prefix
+	line = stylePrefix
+
+	// Left border (only if enabled)
+	if !t.borderConfig.DisableLeft {
+		line += t.borders["vertical"]
+	}
+
+	for i, col := range t.columns {
+		var content string
+		if i < len(row.Cells) {
+			cell := row.Cells[i]
+			content = cell.Content
+
+			// Apply alignment if not disabled
+			if !t.noAlign {
+				align := col.Align
+				if cell.Align != "" {
+					align = cell.Align
+				}
+				content = t.formatCell(content, col.Width, align)
+			}
+		} else {
+			if !t.noAlign {
+				if t.borderConfig.DisablePadding {
+					// No padding for empty cells
+					content = strings.Repeat(" ", col.Width)
+				} else {
+					// Empty cell with padding
+					paddingStr := strings.Repeat(" ", t.padding)
+					effectiveWidth := col.Width - (t.padding * 2)
+					if effectiveWidth < 0 {
+						effectiveWidth = 0
+					}
+					content = paddingStr + strings.Repeat(" ", effectiveWidth) + paddingStr
+				}
+			}
+		}
+
+		line += content
+
+		// Add vertical separator between columns (only if enabled and not the last column)
+		if !t.borderConfig.DisableVertical && i < len(t.columns)-1 {
+			line += t.borders["vertical"]
+		}
+	}
+
+	// Right border (only if enabled)
+	if !t.borderConfig.DisableRight {
+		line += t.borders["vertical"]
+	}
+
+	// End the line with style suffix
+	line += styleSuffix + "\n"
+
+	_, err := t.writer.Write([]byte(line))
+	return err
 }
 
 // RenderRow renders a single row
@@ -365,4 +437,62 @@ func (t *Table) GetBorderStyle() BorderStyle {
 func (t *Table) SetBorderConfig(config BorderConfig) {
 	t.borderConfig = config
 	t.borders = config.Chars
+}
+
+// SetHeaderStyle sets the styling for header row
+func (t *Table) SetHeaderStyle(style HeaderStyle) {
+	t.headerStyle = style
+}
+
+// SetHeaderStyleWithoutSeparator sets the header style and disables the header separator line
+// This is a convenience method for the common use case of styled headers not needing separators
+func (t *Table) SetHeaderStyleWithoutSeparator(style HeaderStyle) {
+	t.headerStyle = style
+	// Disable header separator line since styled headers provide visual distinction
+	t.borderConfig.DisableMiddle = true
+	t.borders = t.borderConfig.Chars
+}
+
+// SetHeaderStyleWithoutBorders sets the header style and disables all horizontal borders
+// This creates a completely clean look with only the styled header for distinction
+func (t *Table) SetHeaderStyleWithoutBorders(style HeaderStyle) {
+	t.headerStyle = style
+	// Disable all horizontal borders for the cleanest look
+	t.borderConfig.DisableTop = true
+	t.borderConfig.DisableMiddle = true
+	t.borderConfig.DisableBottom = true
+	t.borders = t.borderConfig.Chars
+}
+
+// SetHeaderStyleBorderless sets the header style and disables ALL borders including left/right
+// This creates the most minimal table with only styled header and column spacing
+func (t *Table) SetHeaderStyleBorderless(style HeaderStyle) {
+	t.headerStyle = style
+	// Disable all borders but keep internal vertical separators for column distinction
+	t.borderConfig.DisableTop = true
+	t.borderConfig.DisableMiddle = true
+	t.borderConfig.DisableBottom = true
+	t.borderConfig.DisableLeft = true
+	t.borderConfig.DisableRight = true
+	t.borderConfig.DisableVertical = false // Keep column separators
+	t.borders = t.borderConfig.Chars
+}
+
+// SetHeaderStyleMinimal sets the header style and disables absolutely ALL borders and separators
+// This creates the most minimal possible table with only styled header and whitespace separation
+func (t *Table) SetHeaderStyleMinimal(style HeaderStyle) {
+	t.headerStyle = style
+	// Disable absolutely everything
+	t.borderConfig.DisableTop = true
+	t.borderConfig.DisableMiddle = true
+	t.borderConfig.DisableBottom = true
+	t.borderConfig.DisableLeft = true
+	t.borderConfig.DisableRight = true
+	t.borderConfig.DisableVertical = true // No column separators either
+	t.borders = t.borderConfig.Chars
+}
+
+// GetHeaderStyle returns the current header style
+func (t *Table) GetHeaderStyle() HeaderStyle {
+	return t.headerStyle
 }
