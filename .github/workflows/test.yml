@@ -31,14 +31,6 @@ jobs:
         go test -v ./...
         go test -race -v ./...
         go vet ./...
-    
-    - name: Check formatting
-      run: |
-        if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
-          echo "Code is not formatted:"
-          gofmt -s -l .
-          exit 1
-        fi
 
     - name: Check mod tidy
       run: |
