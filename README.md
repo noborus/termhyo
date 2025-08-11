@@ -101,12 +101,13 @@ customConfig := termhyo.BorderConfig{
         "cross":      "+",
         // ... other border characters
     },
-    DisableTop:     true,   // No top border
-    DisableBottom:  true,   // No bottom border
-    DisableMiddle:  false,  // Keep header separator
-    DisableLeft:    true,   // No left border
-    DisableRight:   true,   // No right border
-    DisableVertical: false, // Keep internal column separators
+    Top:      false, // No top border
+    Bottom:   false, // No bottom border
+    Middle:   true,  // Keep header separator
+    Left:     false, // No left border
+    Right:    false, // No right border
+    Vertical: true,  // Keep internal column separators
+    Padding:  true,  // Enable content padding
 }
 
 table.SetBorderConfig(customConfig)
