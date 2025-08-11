@@ -19,6 +19,18 @@ const (
 	StreamingMode
 )
 
+// String returns the string representation of the RenderMode
+func (m RenderMode) String() string {
+	switch m {
+	case BufferedMode:
+		return "Buffered"
+	case StreamingMode:
+		return "Streaming"
+	default:
+		return "Unknown"
+	}
+}
+
 // Buffered implements buffered rendering strategy
 type Buffered struct {
 	rendered bool

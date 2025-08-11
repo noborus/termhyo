@@ -160,12 +160,7 @@ func (t *Table) CalculateColumnWidths() {
 	for _, colIndex := range autoWidthColumns {
 		maxWidth := maxWidths[colIndex]
 
-		// Add padding to the calculated width (padding on both sides) only if padding is enabled
-		if !t.borderConfig.DisablePadding {
-			maxWidth += (t.padding * 2)
-		}
-
-		// Apply max width limit if set (after padding adjustment)
+		// Apply max width limit if set (before padding adjustment)
 		if t.columns[colIndex].MaxWidth > 0 && maxWidth > t.columns[colIndex].MaxWidth {
 			maxWidth = t.columns[colIndex].MaxWidth
 		}
@@ -248,11 +243,7 @@ func (t *Table) RenderHeaderRow(row Row) error {
 				} else {
 					// Empty cell with padding
 					paddingStr := strings.Repeat(" ", t.padding)
-					effectiveWidth := col.Width - (t.padding * 2)
-					if effectiveWidth < 0 {
-						effectiveWidth = 0
-					}
-					content = paddingStr + strings.Repeat(" ", effectiveWidth) + paddingStr
+					content = paddingStr + strings.Repeat(" ", col.Width) + paddingStr
 				}
 			}
 		}
@@ -308,11 +299,7 @@ func (t *Table) RenderRow(row Row) error {
 				} else {
 					// Empty cell with padding
 					paddingStr := strings.Repeat(" ", t.padding)
-					effectiveWidth := col.Width - (t.padding * 2)
-					if effectiveWidth < 0 {
-						effectiveWidth = 0
-					}
-					content = paddingStr + strings.Repeat(" ", effectiveWidth) + paddingStr
+					content = paddingStr + strings.Repeat(" ", col.Width) + paddingStr
 				}
 			}
 		}
@@ -337,28 +324,24 @@ func (t *Table) RenderRow(row Row) error {
 
 // formatCell formats cell content with alignment and padding
 func (t *Table) formatCell(content string, width int, align string) string {
+	contentWidth := stringWidth(content)
 	// Check if padding is disabled for this border style
 	if t.borderConfig.DisablePadding {
 		// No padding, use original behavior
-		if stringWidth(content) > width {
+		if contentWidth > width {
 			content = truncateString(content, width)
 		}
 		return padString(content, width, align)
 	}
 
-	// Calculate effective width (subtract padding from both sides)
-	effectiveWidth := width - (t.padding * 2)
-	if effectiveWidth < 0 {
-		effectiveWidth = 0
+	// For non-padding-disabled mode, width is the content width
+	// Truncate if content is too long for the specified width
+	if contentWidth > width {
+		content = truncateString(content, width)
 	}
 
-	// Truncate if too long for effective width
-	if stringWidth(content) > effectiveWidth {
-		content = truncateString(content, effectiveWidth)
-	}
-
-	// Apply alignment to effective width
-	paddedContent := padString(content, effectiveWidth, align)
+	// Apply alignment to the content width
+	paddedContent := padString(content, width, align)
 
 	// Add padding spaces on both sides
 	paddingStr := strings.Repeat(" ", t.padding)
@@ -379,7 +362,12 @@ func (t *Table) RenderBorderLine(position string) error {
 	}
 
 	for i, col := range t.columns {
-		line += strings.Repeat(t.borders["horizontal"], col.Width)
+		// Calculate the actual cell width (content + padding)
+		cellWidth := col.Width
+		if !t.borderConfig.DisablePadding {
+			cellWidth += (t.padding * 2)
+		}
+		line += strings.Repeat(t.borders["horizontal"], cellWidth)
 
 		if i < len(t.columns)-1 {
 			switch position {

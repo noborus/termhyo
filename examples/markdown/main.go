@@ -9,14 +9,14 @@ import (
 func main() {
 	// Define columns with fixed width for streaming Markdown
 	columns := []termhyo.Column{
-		{Title: "Time", Width: 10, Align: "left"},
-		{Title: "Event", Width: 20, Align: "left"},
-		{Title: "Status", Width: 8, Align: "center"},
+		{Title: "Time", Width: 0, Align: "left"},
+		{Title: "Event", Width: 0, Align: "left"},
+		{Title: "Status", Width: 0, Align: "center"},
 	}
 
 	// Create table with Markdown style
 	table := termhyo.NewTableWithStyle(os.Stdout, columns, termhyo.MarkdownStyle)
-	table.SetNoAlign(true) // Disable alignment for streaming mode
+	//table.SetNoAlign(true) // Disable alignment for streaming mode
 	// Simulate real-time data streaming in Markdown format
 	events := [][]string{
 		{"09:00:00", "System startup", "OK"},

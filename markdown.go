@@ -7,12 +7,16 @@ import (
 
 // MarkdownRenderer implements Markdown table format with streaming support
 type MarkdownRenderer struct {
-	rendered   bool
-	headerDone bool
+	rendered     bool
+	headerDone   bool
+	bufferedRows []Row // Buffer rows for width calculation
 }
 
 // hasAutoWidth checks if any columns have auto width
 func hasAutoWidth(table *Table) bool {
+	if table.noAlign {
+		return false // No auto width in streaming mode
+	}
 	for _, col := range table.columns {
 		if col.Width == 0 {
 			return true
@@ -21,32 +25,17 @@ func hasAutoWidth(table *Table) bool {
 	return false
 }
 
-// AddRow adds a row for markdown rendering (streaming mode)
+// AddRow adds a row for markdown rendering (buffered mode for width calculation)
 func (r *MarkdownRenderer) AddRow(table *Table, row Row) error {
 	if r.rendered {
 		return fmt.Errorf("cannot add rows after table is rendered")
 	}
 
-	// Render header and separator on first row
-	if !r.headerDone {
-		// Calculate column widths if needed
-		if hasAutoWidth(table) {
-			table.rows = append(table.rows, row) // Temporarily add for width calculation
-			table.CalculateColumnWidths()
-			table.rows = table.rows[:len(table.rows)-1] // Remove temporary row
-		}
+	// Buffer the row for width calculation
+	r.bufferedRows = append(r.bufferedRows, row)
 
-		if err := r.renderMarkdownHeader(table); err != nil {
-			return err
-		}
-		if err := r.renderMarkdownSeparator(table); err != nil {
-			return err
-		}
-		r.headerDone = true
-	}
-
-	// Render the data row immediately
-	return r.renderMarkdownRow(table, row)
+	// Don't render immediately - wait for Render() call
+	return nil
 }
 
 // Render renders any remaining content (for streaming, this is just cleanup)
@@ -55,17 +44,26 @@ func (r *MarkdownRenderer) Render(table *Table) error {
 		return fmt.Errorf("table already rendered")
 	}
 
-	// For streaming mode, if no rows were added, render header and separator
-	if !r.headerDone {
-		// Calculate column widths if needed
-		if hasAutoWidth(table) {
-			table.CalculateColumnWidths()
-		}
+	// Calculate column widths if needed using all buffered rows
+	if hasAutoWidth(table) {
+		// Temporarily copy buffered rows to table for width calculation
+		originalRows := table.rows
+		table.rows = r.bufferedRows
+		table.CalculateColumnWidths()
+		table.rows = originalRows // Restore original rows
+	}
 
-		if err := r.renderMarkdownHeader(table); err != nil {
-			return err
-		}
-		if err := r.renderMarkdownSeparator(table); err != nil {
+	// Render header and separator
+	if err := r.renderMarkdownHeader(table); err != nil {
+		return err
+	}
+	if err := r.renderMarkdownSeparator(table); err != nil {
+		return err
+	}
+
+	// Render all buffered rows
+	for _, row := range r.bufferedRows {
+		if err := r.renderMarkdownRow(table, row); err != nil {
 			return err
 		}
 	}
@@ -95,7 +93,10 @@ func (r *MarkdownRenderer) renderMarkdownHeader(table *Table) error {
 
 	for _, col := range table.columns {
 		// Apply alignment to header content (headers are typically centered)
-		content := table.formatCell(col.Title, col.Width, "center")
+		content := col.Title
+		if !table.noAlign {
+			content = table.formatCell(col.Title, col.Width, "center")
+		}
 		line += content + "|"
 	}
 
@@ -110,7 +111,11 @@ func (r *MarkdownRenderer) renderMarkdownSeparator(table *Table) error {
 	line := "|"
 
 	for _, col := range table.columns {
-		separator := r.getAlignmentSeparator(col.Align, col.Width)
+		separatorWidth := max(col.Width, 1)
+		if !table.borderConfig.DisablePadding {
+			separatorWidth += (table.padding * 2)
+		}
+		separator := r.getAlignmentSeparator(col.Align, separatorWidth)
 		line += separator + "|"
 	}
 
@@ -123,17 +128,28 @@ func (r *MarkdownRenderer) renderMarkdownSeparator(table *Table) error {
 func (r *MarkdownRenderer) renderMarkdownRow(table *Table, row Row) error {
 	line := "|"
 
+	// Ensure row.Cells has at least as many elements as table.columns
+	cells := row.Cells
+	if len(cells) < len(table.columns) {
+		// Pad with empty cells if necessary
+		for i := len(cells); i < len(table.columns); i++ {
+			cells = append(cells, Cell{Content: ""})
+		}
+	}
+
 	for i, col := range table.columns {
 		var content string
-		if i < len(row.Cells) {
-			// Apply column alignment to cell content
-			cellAlign := col.Align
-			if row.Cells[i].Align != "" {
-				cellAlign = row.Cells[i].Align // Cell-specific alignment overrides column alignment
-			}
-			content = table.formatCell(row.Cells[i].Content, col.Width, cellAlign)
+		// Apply column alignment to cell content
+		cellAlign := col.Align
+		if cells[i].Align != "" {
+			cellAlign = cells[i].Align // Cell-specific alignment overrides column alignment
+		}
+		if table.noAlign {
+			// If noAlign is set, do not apply alignment
+			content = cells[i].Content
 		} else {
-			content = table.formatCell("", col.Width, col.Align)
+			// Apply alignment to cell content
+			content = table.formatCell(cells[i].Content, col.Width, cellAlign)
 		}
 		line += content + "|"
 	}

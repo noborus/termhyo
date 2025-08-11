@@ -325,9 +325,9 @@ func testMarkdownWithHeaderStyle() string {
 func testStreamingMode() string {
 	var buf bytes.Buffer
 	columns := []Column{
-		{Title: "ID", Width: 5, Align: "right"},       // Fixed width for streaming
-		{Title: "Name", Width: 10, Align: "left"},     // Fixed width for streaming
-		{Title: "Status", Width: 12, Align: "center"}, // Fixed width for streaming
+		{Title: "ID", Width: 3, Align: "right"},       // Fixed width for streaming
+		{Title: "Name", Width: 8, Align: "left"},      // Fixed width for streaming
+		{Title: "Status", Width: 10, Align: "center"}, // Fixed width for streaming
 	}
 
 	table := NewTable(&buf, columns)
