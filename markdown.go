@@ -8,13 +8,12 @@ import (
 // MarkdownRenderer implements Markdown table format with streaming support
 type MarkdownRenderer struct {
 	rendered     bool
-	headerDone   bool
 	bufferedRows []Row // Buffer rows for width calculation
 }
 
 // hasAutoWidth checks if any columns have auto width
 func hasAutoWidth(table *Table) bool {
-	if table.noAlign {
+	if !table.align {
 		return false // No auto width in streaming mode
 	}
 	for _, col := range table.columns {
@@ -94,7 +93,7 @@ func (r *MarkdownRenderer) renderMarkdownHeader(table *Table) error {
 	for _, col := range table.columns {
 		// Apply alignment to header content (headers are typically centered)
 		content := col.Title
-		if !table.noAlign {
+		if table.align {
 			content = table.formatCell(col.Title, col.Width, "center")
 		}
 		line += content + "|"
@@ -112,7 +111,7 @@ func (r *MarkdownRenderer) renderMarkdownSeparator(table *Table) error {
 
 	for _, col := range table.columns {
 		separatorWidth := max(col.Width, 1)
-		if !table.borderConfig.DisablePadding {
+		if table.borderConfig.Padding {
 			separatorWidth += (table.padding * 2)
 		}
 		separator := r.getAlignmentSeparator(col.Align, separatorWidth)
@@ -138,19 +137,19 @@ func (r *MarkdownRenderer) renderMarkdownRow(table *Table, row Row) error {
 	}
 
 	for i, col := range table.columns {
+		if !table.align {
+			line += cells[i].Content + "|"
+			continue // Skip alignment if noAlign is set
+		}
+
 		var content string
 		// Apply column alignment to cell content
 		cellAlign := col.Align
 		if cells[i].Align != "" {
 			cellAlign = cells[i].Align // Cell-specific alignment overrides column alignment
 		}
-		if table.noAlign {
-			// If noAlign is set, do not apply alignment
-			content = cells[i].Content
-		} else {
-			// Apply alignment to cell content
-			content = table.formatCell(cells[i].Content, col.Width, cellAlign)
-		}
+		// Format cell content with alignment
+		content = table.formatCell(cells[i].Content, col.Width, cellAlign)
 		line += content + "|"
 	}
 

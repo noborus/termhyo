@@ -5,14 +5,14 @@ type BorderStyle string
 
 // BorderConfig holds border style configuration
 type BorderConfig struct {
-	Chars           map[string]string
-	DisableTop      bool
-	DisableBottom   bool
-	DisableMiddle   bool
-	DisableLeft     bool
-	DisableRight    bool
-	DisableVertical bool // Controls internal vertical separators
-	DisablePadding  bool // Controls content padding
+	Chars    map[string]string
+	Top      bool // Show top border
+	Bottom   bool // Show bottom border
+	Middle   bool // Show middle separator between header and data
+	Left     bool // Show left border
+	Right    bool // Show right border
+	Vertical bool // Show internal vertical separators
+	Padding  bool // Add content padding
 }
 
 const (
@@ -48,13 +48,13 @@ var (
 			"left_cross":   "├",
 			"right_cross":  "┤",
 		},
-		DisableTop:      false,
-		DisableBottom:   false,
-		DisableMiddle:   false,
-		DisableLeft:     false,
-		DisableRight:    false,
-		DisableVertical: false,
-		DisablePadding:  false,
+		Top:      true,
+		Bottom:   true,
+		Middle:   true,
+		Left:     true,
+		Right:    true,
+		Vertical: true,
+		Padding:  true,
 	}
 
 	asciiConfig = BorderConfig{
@@ -71,13 +71,13 @@ var (
 			"left_cross":   "+",
 			"right_cross":  "+",
 		},
-		DisableTop:      false,
-		DisableBottom:   false,
-		DisableMiddle:   false,
-		DisableLeft:     false,
-		DisableRight:    false,
-		DisableVertical: false,
-		DisablePadding:  false,
+		Top:      true,
+		Bottom:   true,
+		Middle:   true,
+		Left:     true,
+		Right:    true,
+		Vertical: true,
+		Padding:  true,
 	}
 
 	roundedConfig = BorderConfig{
@@ -94,13 +94,13 @@ var (
 			"left_cross":   "├",
 			"right_cross":  "┤",
 		},
-		DisableTop:      false,
-		DisableBottom:   false,
-		DisableMiddle:   false,
-		DisableLeft:     false,
-		DisableRight:    false,
-		DisableVertical: false,
-		DisablePadding:  false,
+		Top:      true,
+		Bottom:   true,
+		Middle:   true,
+		Left:     true,
+		Right:    true,
+		Vertical: true,
+		Padding:  true,
 	}
 
 	doubleConfig = BorderConfig{
@@ -117,13 +117,13 @@ var (
 			"left_cross":   "╠",
 			"right_cross":  "╣",
 		},
-		DisableTop:      false,
-		DisableBottom:   false,
-		DisableMiddle:   false,
-		DisableLeft:     false,
-		DisableRight:    false,
-		DisableVertical: false,
-		DisablePadding:  false,
+		Top:      true,
+		Bottom:   true,
+		Middle:   true,
+		Left:     true,
+		Right:    true,
+		Vertical: true,
+		Padding:  true,
 	}
 
 	minimalConfig = BorderConfig{
@@ -140,13 +140,13 @@ var (
 			"left_cross":   " ",
 			"right_cross":  " ",
 		},
-		DisableTop:      true,
-		DisableBottom:   true,
-		DisableMiddle:   true,
-		DisableLeft:     true,
-		DisableRight:    true,
-		DisableVertical: true,
-		DisablePadding:  false,
+		Top:      false,
+		Bottom:   false,
+		Middle:   false,
+		Left:     false,
+		Right:    false,
+		Vertical: false,
+		Padding:  true,
 	}
 
 	markdownConfig = BorderConfig{
@@ -163,13 +163,13 @@ var (
 			"left_cross":   "|",
 			"right_cross":  "|",
 		},
-		DisableTop:      true,
-		DisableBottom:   true,
-		DisableMiddle:   false,
-		DisableLeft:     false,
-		DisableRight:    false,
-		DisableVertical: false,
-		DisablePadding:  false, // Use common padding functionality
+		Top:      false,
+		Bottom:   false,
+		Middle:   true,
+		Left:     true,
+		Right:    true,
+		Vertical: true,
+		Padding:  true, // Use common padding functionality
 	}
 
 	tsvConfig = BorderConfig{
@@ -186,13 +186,13 @@ var (
 			"left_cross":   "",
 			"right_cross":  "",
 		},
-		DisableTop:      true,
-		DisableBottom:   true,
-		DisableMiddle:   true,
-		DisableLeft:     true,
-		DisableRight:    true,
-		DisableVertical: false,
-		DisablePadding:  true, // Disable padding for TSV format
+		Top:      false,
+		Bottom:   false,
+		Middle:   false,
+		Left:     false,
+		Right:    false,
+		Vertical: true,
+		Padding:  false, // Disable padding for TSV format
 	}
 )
 

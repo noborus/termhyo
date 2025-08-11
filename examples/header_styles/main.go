@@ -33,9 +33,9 @@ func main() {
 	table2.SetHeaderStyle(blueHeaderStyle)
 	// Disable the header separator line and top/bottom borders for cleaner look
 	borderConfig := table2.GetBorderConfig()
-	borderConfig.DisableMiddle = true
-	borderConfig.DisableTop = true
-	borderConfig.DisableBottom = true
+	borderConfig.Middle = false
+	borderConfig.Top = false
+	borderConfig.Bottom = false
 	table2.SetBorderConfig(borderConfig)
 	table2.AddRow("1", "Laptop", "$999.99", "Available")
 	table2.AddRow("2", "Mouse", "$29.99", "Sold Out")
@@ -52,9 +52,9 @@ func main() {
 	table3.SetHeaderStyle(greenHeaderStyle)
 	// Disable borders for clean look
 	borderConfig3 := table3.GetBorderConfig()
-	borderConfig3.DisableMiddle = true
-	borderConfig3.DisableTop = true
-	borderConfig3.DisableBottom = true
+	borderConfig3.Middle = false
+	borderConfig3.Top = false
+	borderConfig3.Bottom = false
 	table3.SetBorderConfig(borderConfig3)
 	table3.AddRow("1", "Laptop", "$999.99", "Available")
 	table3.AddRow("2", "Mouse", "$29.99", "Sold Out")
@@ -71,9 +71,9 @@ func main() {
 	table4.SetHeaderStyle(yellowHeaderStyle)
 	// Disable borders for clean look
 	borderConfig4 := table4.GetBorderConfig()
-	borderConfig4.DisableMiddle = true
-	borderConfig4.DisableTop = true
-	borderConfig4.DisableBottom = true
+	borderConfig4.Middle = false
+	borderConfig4.Top = false
+	borderConfig4.Bottom = false
 	table4.SetBorderConfig(borderConfig4)
 	table4.AddRow("1", "Laptop", "$999.99", "Available")
 	table4.AddRow("2", "Mouse", "$29.99", "Sold Out")
@@ -91,9 +91,9 @@ func main() {
 	table5.SetHeaderStyle(cyanHeaderStyle)
 	// Disable borders for clean look
 	borderConfig5 := table5.GetBorderConfig()
-	borderConfig5.DisableMiddle = true
-	borderConfig5.DisableTop = true
-	borderConfig5.DisableBottom = true
+	borderConfig5.Middle = false
+	borderConfig5.Top = false
+	borderConfig5.Bottom = false
 	table5.SetBorderConfig(borderConfig5)
 	table5.AddRow("1", "Laptop", "$999.99", "Available")
 	table5.AddRow("2", "Mouse", "$29.99", "Sold Out")
@@ -110,9 +110,9 @@ func main() {
 	table6.SetHeaderStyle(trueColorStyle)
 	// Disable borders for clean look
 	borderConfig6 := table6.GetBorderConfig()
-	borderConfig6.DisableMiddle = true
-	borderConfig6.DisableTop = true
-	borderConfig6.DisableBottom = true
+	borderConfig6.Middle = false
+	borderConfig6.Top = false
+	borderConfig6.Bottom = false
 	table6.SetBorderConfig(borderConfig6)
 	table6.AddRow("1", "Laptop", "$999.99", "Available")
 	table6.AddRow("2", "Mouse", "$29.99", "Sold Out")
@@ -128,9 +128,9 @@ func main() {
 	table7.SetHeaderStyle(reverseStyle)
 	// Disable borders for clean look
 	borderConfig7 := table7.GetBorderConfig()
-	borderConfig7.DisableMiddle = true
-	borderConfig7.DisableTop = true
-	borderConfig7.DisableBottom = true
+	borderConfig7.Middle = false
+	borderConfig7.Top = false
+	borderConfig7.Bottom = false
 	table7.SetBorderConfig(borderConfig7)
 	table7.AddRow("1", "Laptop", "$999.99", "Available")
 	table7.AddRow("2", "Mouse", "$29.99", "Sold Out")
@@ -156,9 +156,9 @@ func main() {
 	tableWithout := termhyo.NewTable(os.Stdout, columns)
 	tableWithout.SetHeaderStyle(headerStyle)
 	borderConfigWithout := tableWithout.GetBorderConfig()
-	borderConfigWithout.DisableMiddle = true
-	borderConfigWithout.DisableTop = true
-	borderConfigWithout.DisableBottom = true
+	borderConfigWithout.Middle = false
+	borderConfigWithout.Top = false
+	borderConfigWithout.Bottom = false
 	tableWithout.SetBorderConfig(borderConfigWithout)
 	tableWithout.AddRow("1", "Laptop", "$999.99", "Available")
 	tableWithout.AddRow("2", "Mouse", "$29.99", "Sold Out")
@@ -203,13 +203,13 @@ func main() {
 	tableBorderless.SetHeaderStyle(orangeStyle)
 	// Disable ALL borders for the most minimal look
 	borderConfigBorderless := tableBorderless.GetBorderConfig()
-	borderConfigBorderless.DisableTop = true
-	borderConfigBorderless.DisableBottom = true
-	borderConfigBorderless.DisableMiddle = true
-	borderConfigBorderless.DisableLeft = true
-	borderConfigBorderless.DisableRight = true
+	borderConfigBorderless.Top = false
+	borderConfigBorderless.Bottom = false
+	borderConfigBorderless.Middle = false
+	borderConfigBorderless.Left = false
+	borderConfigBorderless.Right = false
 	// Keep internal vertical separators for column distinction
-	borderConfigBorderless.DisableVertical = false
+	borderConfigBorderless.Vertical = true
 	tableBorderless.SetBorderConfig(borderConfigBorderless)
 	tableBorderless.AddRow("1", "Laptop", "$999.99", "Available")
 	tableBorderless.AddRow("2", "Mouse", "$29.99", "Sold Out")
@@ -226,12 +226,12 @@ func main() {
 	tableCleanest.SetHeaderStyle(tealStyle)
 	// Disable absolutely ALL borders and separators
 	borderConfigCleanest := tableCleanest.GetBorderConfig()
-	borderConfigCleanest.DisableTop = true
-	borderConfigCleanest.DisableBottom = true
-	borderConfigCleanest.DisableMiddle = true
-	borderConfigCleanest.DisableLeft = true
-	borderConfigCleanest.DisableRight = true
-	borderConfigCleanest.DisableVertical = true // No internal separators either
+	borderConfigCleanest.Top = false
+	borderConfigCleanest.Bottom = false
+	borderConfigCleanest.Middle = false
+	borderConfigCleanest.Left = false
+	borderConfigCleanest.Right = false
+	borderConfigCleanest.Vertical = false // No internal separators either
 	tableCleanest.SetBorderConfig(borderConfigCleanest)
 	tableCleanest.AddRow("1", "Laptop", "$999.99", "Available")
 	tableCleanest.AddRow("2", "Mouse", "$29.99", "Sold Out")

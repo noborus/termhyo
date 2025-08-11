@@ -262,21 +262,21 @@ func testDifferentBorderStyles() string {
 
 	// Box Drawing Style
 	buf.WriteString("=== Box Drawing Style ===\n")
-	table1 := NewTableWithStyle(&buf, columns, BoxDrawingStyle)
+	table1 := NewTableWithStyle(&buf, columns, WithBorderStyle(BoxDrawingStyle))
 	table1.AddRow("Box", "Unicode box drawing")
 	table1.Render()
 	buf.WriteString("\n")
 
 	// ASCII Style
 	buf.WriteString("=== ASCII Style ===\n")
-	table2 := NewTableWithStyle(&buf, columns, ASCIIStyle)
+	table2 := NewTableWithStyle(&buf, columns, WithBorderStyle(ASCIIStyle))
 	table2.AddRow("ASCII", "ASCII characters")
 	table2.Render()
 	buf.WriteString("\n")
 
 	// Rounded Style
 	buf.WriteString("=== Rounded Style ===\n")
-	table3 := NewTableWithStyle(&buf, columns, RoundedStyle)
+	table3 := NewTableWithStyle(&buf, columns, WithBorderStyle(RoundedStyle))
 	table3.AddRow("Rounded", "Rounded corners")
 	table3.Render()
 
@@ -291,7 +291,7 @@ func testMarkdownTable() string {
 		{Title: "Priority", Width: 0, Align: "right"},
 	}
 
-	table := NewTableWithStyle(&buf, columns, MarkdownStyle)
+	table := NewTableWithStyle(&buf, columns, WithBorderStyle(MarkdownStyle))
 	table.AddRow("Header styles", "Done", "High")
 	table.AddRow("Border controls", "Done", "High")
 	table.AddRow("Documentation", "In Progress", "Medium")
@@ -308,13 +308,12 @@ func testMarkdownWithHeaderStyle() string {
 		{Title: "Priority", Width: 0, Align: "right"},
 	}
 
-	table := NewTableWithStyle(&buf, columns, MarkdownStyle)
 	headerStyle := HeaderStyle{
 		Bold:            true,
 		ForegroundColor: AnsiWhite,
 		BackgroundColor: AnsiBgBlue,
 	}
-	table.SetHeaderStyle(headerStyle)
+	table := NewTableWithStyle(&buf, columns, WithStyles(MarkdownStyle, headerStyle))
 	table.AddRow("Header styles", "Done", "High")
 	table.AddRow("Border controls", "Done", "High")
 	table.Render()
@@ -388,12 +387,13 @@ func testCustomBorders() string {
 		Chars: map[string]string{
 			"vertical": " | ",
 		},
-		DisableTop:      true,
-		DisableBottom:   true,
-		DisableMiddle:   true,
-		DisableLeft:     true,
-		DisableRight:    true,
-		DisableVertical: false,
+		Top:      false,
+		Bottom:   false,
+		Middle:   false,
+		Left:     false,
+		Right:    false,
+		Vertical: true,
+		Padding:  true,
 	}
 
 	table.SetBorderConfig(customConfig)
@@ -413,7 +413,7 @@ func testNoAlignMode() string {
 	}
 
 	table := NewTable(&buf, columns)
-	table.SetNoAlign(true) // Disable alignment
+	table.SetAlign(false) // Disable alignment
 	table.AddRow("A", "B", "C")
 	table.AddRow("LongText", "X", "Y")
 	table.Render()

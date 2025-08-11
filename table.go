@@ -5,6 +5,44 @@ import (
 	"strings"
 )
 
+// TableStyle represents the complete styling configuration for a table
+type TableStyle struct {
+	BorderStyle BorderStyle // Border style configuration
+	HeaderStyle HeaderStyle // Header styling configuration
+}
+
+// DefaultTableStyle returns the default table style
+func DefaultTableStyle() TableStyle {
+	return TableStyle{
+		BorderStyle: BoxDrawingStyle,
+		HeaderStyle: HeaderStyle{},
+	}
+}
+
+// WithBorderStyle creates a TableStyle with the specified border style
+func WithBorderStyle(borderStyle BorderStyle) TableStyle {
+	return TableStyle{
+		BorderStyle: borderStyle,
+		HeaderStyle: HeaderStyle{},
+	}
+}
+
+// WithHeaderStyle creates a TableStyle with the specified header style
+func WithHeaderStyle(headerStyle HeaderStyle) TableStyle {
+	return TableStyle{
+		BorderStyle: BoxDrawingStyle,
+		HeaderStyle: headerStyle,
+	}
+}
+
+// WithStyles creates a TableStyle with both border and header styles
+func WithStyles(borderStyle BorderStyle, headerStyle HeaderStyle) TableStyle {
+	return TableStyle{
+		BorderStyle: borderStyle,
+		HeaderStyle: headerStyle,
+	}
+}
+
 // Table represents the main table structure
 type Table struct {
 	columns      []Column
@@ -14,12 +52,10 @@ type Table struct {
 	renderer     Renderer
 	borderStyle  BorderStyle
 	borderConfig BorderConfig
-	noAlign      bool // skip alignment entirely for all columns
-
-	// Style configuration
-	borders     map[string]string
-	padding     int
-	headerStyle HeaderStyle // styling for header row
+	align        bool // If false, skip alignment for all columns
+	borders      map[string]string
+	padding      int
+	headerStyle  HeaderStyle // styling for header row
 }
 
 // GetBorderConfig returns the current border configuration
@@ -27,9 +63,9 @@ func (t *Table) GetBorderConfig() BorderConfig {
 	return t.borderConfig
 }
 
-// SetNoAlign sets whether to skip alignment for all columns
-func (t *Table) SetNoAlign(noAlign bool) {
-	t.noAlign = noAlign
+// SetAlign sets whether to skip alignment for all columns
+func (t *Table) SetAlign(align bool) {
+	t.align = align
 	// Recalculate render mode when alignment setting changes
 	t.mode = t.determineRenderMode()
 
@@ -43,28 +79,30 @@ func (t *Table) SetNoAlign(noAlign bool) {
 	}
 }
 
-// GetNoAlign returns the current no-align setting
-func (t *Table) GetNoAlign() bool {
-	return t.noAlign
+// GetAlign returns the current align setting
+func (t *Table) GetAlign() bool {
+	return t.align
 }
 
-// NewTable creates a new table
+// NewTable creates a new table with default styling
 func NewTable(writer io.Writer, columns []Column) *Table {
-	return NewTableWithStyle(writer, columns, BoxDrawingStyle)
+	return NewTableWithStyle(writer, columns, DefaultTableStyle())
 }
 
-// NewTableWithStyle creates a new table with specified border style
-func NewTableWithStyle(writer io.Writer, columns []Column, borderStyle BorderStyle) *Table {
-	borderConfig := getBorderConfig(borderStyle)
+// NewTableWithStyle creates a new table with specified styling
+func NewTableWithStyle(writer io.Writer, columns []Column, style TableStyle) *Table {
+	borderConfig := getBorderConfig(style.BorderStyle)
 
 	t := &Table{
 		columns:      columns,
 		writer:       writer,
 		rows:         make([]Row, 0),
 		padding:      1,
-		borderStyle:  borderStyle,
+		align:        true, // Default to aligned columns
+		borderStyle:  style.BorderStyle,
 		borderConfig: borderConfig,
 		borders:      borderConfig.Chars,
+		headerStyle:  style.HeaderStyle,
 	}
 
 	// Determine render mode based on column configuration
@@ -94,7 +132,7 @@ func (t *Table) determineRenderMode() RenderMode {
 	}
 
 	// Use streaming mode if no auto-width calculation needed OR no alignment needed
-	if !hasAutoWidth || t.noAlign {
+	if !hasAutoWidth || !t.align {
 		return StreamingMode
 	}
 
@@ -172,7 +210,7 @@ func (t *Table) CalculateColumnWidths() {
 // RenderHeader renders the table header
 func (t *Table) RenderHeader() error {
 	// Top border (only if enabled)
-	if !t.borderConfig.DisableTop {
+	if t.borderConfig.Top {
 		if err := t.RenderBorderLine("top"); err != nil {
 			return err
 		}
@@ -195,7 +233,7 @@ func (t *Table) RenderHeader() error {
 	}
 
 	// Header separator (only if enabled)
-	if !t.borderConfig.DisableMiddle {
+	if t.borderConfig.Middle {
 		return t.RenderBorderLine("middle")
 	}
 
@@ -217,7 +255,7 @@ func (t *Table) RenderHeaderRow(row Row) error {
 	line = stylePrefix
 
 	// Left border (only if enabled)
-	if !t.borderConfig.DisableLeft {
+	if t.borderConfig.Left {
 		line += t.borders["vertical"]
 	}
 
@@ -228,7 +266,7 @@ func (t *Table) RenderHeaderRow(row Row) error {
 			content = cell.Content
 
 			// Apply alignment if not disabled
-			if !t.noAlign {
+			if t.align {
 				align := col.Align
 				if cell.Align != "" {
 					align = cell.Align
@@ -236,8 +274,8 @@ func (t *Table) RenderHeaderRow(row Row) error {
 				content = t.formatCell(content, col.Width, align)
 			}
 		} else {
-			if !t.noAlign {
-				if t.borderConfig.DisablePadding {
+			if t.align {
+				if !t.borderConfig.Padding {
 					// No padding for empty cells
 					content = strings.Repeat(" ", col.Width)
 				} else {
@@ -251,13 +289,13 @@ func (t *Table) RenderHeaderRow(row Row) error {
 		line += content
 
 		// Add vertical separator between columns (only if enabled and not the last column)
-		if !t.borderConfig.DisableVertical && i < len(t.columns)-1 {
+		if t.borderConfig.Vertical && i < len(t.columns)-1 {
 			line += t.borders["vertical"]
 		}
 	}
 
 	// Right border (only if enabled)
-	if !t.borderConfig.DisableRight {
+	if t.borderConfig.Right {
 		line += t.borders["vertical"]
 	}
 
@@ -273,7 +311,7 @@ func (t *Table) RenderRow(row Row) error {
 	var line string
 
 	// Left border (only if enabled)
-	if !t.borderConfig.DisableLeft {
+	if t.borderConfig.Left {
 		line = t.borders["vertical"]
 	}
 
@@ -284,7 +322,7 @@ func (t *Table) RenderRow(row Row) error {
 			content = cell.Content
 
 			// Apply alignment if not disabled
-			if !t.noAlign {
+			if t.align {
 				align := col.Align
 				if cell.Align != "" {
 					align = cell.Align
@@ -292,8 +330,8 @@ func (t *Table) RenderRow(row Row) error {
 				content = t.formatCell(content, col.Width, align)
 			}
 		} else {
-			if !t.noAlign {
-				if t.borderConfig.DisablePadding {
+			if t.align {
+				if !t.borderConfig.Padding {
 					// No padding for empty cells
 					content = strings.Repeat(" ", col.Width)
 				} else {
@@ -307,13 +345,13 @@ func (t *Table) RenderRow(row Row) error {
 		line += content
 
 		// Add vertical separator between columns (only if enabled and not the last column)
-		if !t.borderConfig.DisableVertical && i < len(t.columns)-1 {
+		if t.borderConfig.Vertical && i < len(t.columns)-1 {
 			line += t.borders["vertical"]
 		}
 	}
 
 	// Right border (only if enabled)
-	if !t.borderConfig.DisableRight {
+	if t.borderConfig.Right {
 		line += t.borders["vertical"]
 	}
 
@@ -326,7 +364,7 @@ func (t *Table) RenderRow(row Row) error {
 func (t *Table) formatCell(content string, width int, align string) string {
 	contentWidth := stringWidth(content)
 	// Check if padding is disabled for this border style
-	if t.borderConfig.DisablePadding {
+	if !t.borderConfig.Padding {
 		// No padding, use original behavior
 		if contentWidth > width {
 			content = truncateString(content, width)
@@ -364,7 +402,7 @@ func (t *Table) RenderBorderLine(position string) error {
 	for i, col := range t.columns {
 		// Calculate the actual cell width (content + padding)
 		cellWidth := col.Width
-		if !t.borderConfig.DisablePadding {
+		if t.borderConfig.Padding {
 			cellWidth += (t.padding * 2)
 		}
 		line += strings.Repeat(t.borders["horizontal"], cellWidth)
@@ -398,7 +436,7 @@ func (t *Table) RenderBorderLine(position string) error {
 // RenderFooter renders the table footer
 func (t *Table) RenderFooter() error {
 	// Bottom border (only if enabled)
-	if !t.borderConfig.DisableBottom {
+	if t.borderConfig.Bottom {
 		return t.RenderBorderLine("bottom")
 	}
 	return nil
@@ -437,7 +475,7 @@ func (t *Table) SetHeaderStyle(style HeaderStyle) {
 func (t *Table) SetHeaderStyleWithoutSeparator(style HeaderStyle) {
 	t.headerStyle = style
 	// Disable header separator line since styled headers provide visual distinction
-	t.borderConfig.DisableMiddle = true
+	t.borderConfig.Middle = false
 	t.borders = t.borderConfig.Chars
 }
 
@@ -446,9 +484,9 @@ func (t *Table) SetHeaderStyleWithoutSeparator(style HeaderStyle) {
 func (t *Table) SetHeaderStyleWithoutBorders(style HeaderStyle) {
 	t.headerStyle = style
 	// Disable all horizontal borders for the cleanest look
-	t.borderConfig.DisableTop = true
-	t.borderConfig.DisableMiddle = true
-	t.borderConfig.DisableBottom = true
+	t.borderConfig.Top = false
+	t.borderConfig.Middle = false
+	t.borderConfig.Bottom = false
 	t.borders = t.borderConfig.Chars
 }
 
@@ -457,12 +495,12 @@ func (t *Table) SetHeaderStyleWithoutBorders(style HeaderStyle) {
 func (t *Table) SetHeaderStyleBorderless(style HeaderStyle) {
 	t.headerStyle = style
 	// Disable all borders but keep internal vertical separators for column distinction
-	t.borderConfig.DisableTop = true
-	t.borderConfig.DisableMiddle = true
-	t.borderConfig.DisableBottom = true
-	t.borderConfig.DisableLeft = true
-	t.borderConfig.DisableRight = true
-	t.borderConfig.DisableVertical = false // Keep column separators
+	t.borderConfig.Top = false
+	t.borderConfig.Middle = false
+	t.borderConfig.Bottom = false
+	t.borderConfig.Left = false
+	t.borderConfig.Right = false
+	t.borderConfig.Vertical = true // Keep column separators
 	t.borders = t.borderConfig.Chars
 }
 
@@ -471,12 +509,12 @@ func (t *Table) SetHeaderStyleBorderless(style HeaderStyle) {
 func (t *Table) SetHeaderStyleMinimal(style HeaderStyle) {
 	t.headerStyle = style
 	// Disable absolutely everything
-	t.borderConfig.DisableTop = true
-	t.borderConfig.DisableMiddle = true
-	t.borderConfig.DisableBottom = true
-	t.borderConfig.DisableLeft = true
-	t.borderConfig.DisableRight = true
-	t.borderConfig.DisableVertical = true // No column separators either
+	t.borderConfig.Top = false
+	t.borderConfig.Middle = false
+	t.borderConfig.Bottom = false
+	t.borderConfig.Left = false
+	t.borderConfig.Right = false
+	t.borderConfig.Vertical = false // No column separators either
 	t.borders = t.borderConfig.Chars
 }
 

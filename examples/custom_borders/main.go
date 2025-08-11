@@ -31,7 +31,7 @@ func main() {
 
 	for _, config := range testConfigs {
 		fmt.Printf("=== %s Style ===\n", config.name)
-		table := termhyo.NewTableWithStyle(os.Stdout, columns, config.style)
+		table := termhyo.NewTableWithStyle(os.Stdout, columns, termhyo.WithBorderStyle(config.style))
 
 		// Add header
 		table.AddRow("Test", config.desc, config.border)
@@ -58,12 +58,12 @@ func main() {
 		Chars: map[string]string{
 			"vertical": " | ",
 		},
-		DisableTop:      true,
-		DisableBottom:   true,
-		DisableMiddle:   true,
-		DisableLeft:     true,
-		DisableRight:    true,
-		DisableVertical: false,
+		Top:      false,
+		Bottom:   false,
+		Middle:   false,
+		Left:     false,
+		Right:    false,
+		Vertical: true,
 	}
 
 	customTable.SetBorderConfig(customConfig)

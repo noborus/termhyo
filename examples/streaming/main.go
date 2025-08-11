@@ -16,7 +16,7 @@ func main() {
 	}
 
 	// Create table with fixed width (enables streaming mode)
-	table := termhyo.NewTableWithStyle(os.Stdout, columns, termhyo.ASCIIStyle)
+	table := termhyo.NewTableWithStyle(os.Stdout, columns, termhyo.WithBorderStyle(termhyo.ASCIIStyle))
 
 	// Disable alignment for streaming mode using Table-level setting
 	//table.SetNoAlign(true)

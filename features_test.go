@@ -61,8 +61,8 @@ func TestIndividualFeatures(t *testing.T) {
 
 		table := NewTable(&buf, columns)
 		config := table.GetBorderConfig()
-		config.DisableTop = true
-		config.DisableBottom = true
+		config.Top = false
+		config.Bottom = false
 		table.SetBorderConfig(config)
 
 		table.AddRow("Data")
@@ -90,7 +90,7 @@ func TestConvenienceMethods(t *testing.T) {
 			},
 			checkFn: func(table *Table) bool {
 				config := table.GetBorderConfig()
-				return config.DisableMiddle
+				return !config.Middle
 			},
 		},
 		{
@@ -100,7 +100,7 @@ func TestConvenienceMethods(t *testing.T) {
 			},
 			checkFn: func(table *Table) bool {
 				config := table.GetBorderConfig()
-				return config.DisableTop && config.DisableMiddle && config.DisableBottom
+				return !config.Top && !config.Middle && !config.Bottom
 			},
 		},
 		{
@@ -110,8 +110,8 @@ func TestConvenienceMethods(t *testing.T) {
 			},
 			checkFn: func(table *Table) bool {
 				config := table.GetBorderConfig()
-				return config.DisableTop && config.DisableMiddle && config.DisableBottom &&
-					config.DisableLeft && config.DisableRight && !config.DisableVertical
+				return !config.Top && !config.Middle && !config.Bottom &&
+					!config.Left && !config.Right && config.Vertical
 			},
 		},
 		{
@@ -121,8 +121,8 @@ func TestConvenienceMethods(t *testing.T) {
 			},
 			checkFn: func(table *Table) bool {
 				config := table.GetBorderConfig()
-				return config.DisableTop && config.DisableMiddle && config.DisableBottom &&
-					config.DisableLeft && config.DisableRight && config.DisableVertical
+				return !config.Top && !config.Middle && !config.Bottom &&
+					!config.Left && !config.Right && !config.Vertical
 			},
 		},
 	}
@@ -192,7 +192,7 @@ func TestRenderModes(t *testing.T) {
 		}
 
 		table := NewTable(&buf, columns)
-		table.SetNoAlign(true) // This should trigger streaming mode
+		table.SetAlign(false) // This should trigger streaming mode
 		table.AddRow("Data")
 		table.Render()
 
