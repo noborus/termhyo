@@ -242,7 +242,7 @@ func (t *Table) RenderHeader() error {
 
 // RenderHeaderRow renders a header row with full-line styling
 func (t *Table) RenderHeaderRow(row Row) error {
-	var line string
+	var builder strings.Builder
 	var stylePrefix, styleSuffix string
 
 	// Apply header style to the entire line if configured
@@ -252,11 +252,11 @@ func (t *Table) RenderHeaderRow(row Row) error {
 	}
 
 	// Start the line with style prefix
-	line = stylePrefix
+	builder.WriteString(stylePrefix)
 
 	// Left border (only if enabled)
 	if t.borderConfig.Left {
-		line += t.borders["vertical"]
+		builder.WriteString(t.borders["vertical"])
 	}
 
 	for i, col := range t.columns {
@@ -279,40 +279,45 @@ func (t *Table) RenderHeaderRow(row Row) error {
 					// No padding for empty cells
 					content = strings.Repeat(" ", col.Width)
 				} else {
-					// Empty cell with padding
+					// Empty cell with padding using strings.Builder
+					var cellBuilder strings.Builder
 					paddingStr := strings.Repeat(" ", t.padding)
-					content = paddingStr + strings.Repeat(" ", col.Width) + paddingStr
+					cellBuilder.WriteString(paddingStr)
+					cellBuilder.WriteString(strings.Repeat(" ", col.Width))
+					cellBuilder.WriteString(paddingStr)
+					content = cellBuilder.String()
 				}
 			}
 		}
 
-		line += content
+		builder.WriteString(content)
 
 		// Add vertical separator between columns (only if enabled and not the last column)
 		if t.borderConfig.Vertical && i < len(t.columns)-1 {
-			line += t.borders["vertical"]
+			builder.WriteString(t.borders["vertical"])
 		}
 	}
 
 	// Right border (only if enabled)
 	if t.borderConfig.Right {
-		line += t.borders["vertical"]
+		builder.WriteString(t.borders["vertical"])
 	}
 
 	// End the line with style suffix
-	line += styleSuffix + "\n"
+	builder.WriteString(styleSuffix)
+	builder.WriteString("\n")
 
-	_, err := t.writer.Write([]byte(line))
+	_, err := t.writer.Write([]byte(builder.String()))
 	return err
 }
 
 // RenderRow renders a single row
 func (t *Table) RenderRow(row Row) error {
-	var line string
+	var builder strings.Builder
 
 	// Left border (only if enabled)
 	if t.borderConfig.Left {
-		line = t.borders["vertical"]
+		builder.WriteString(t.borders["vertical"])
 	}
 
 	for i, col := range t.columns {
@@ -335,28 +340,32 @@ func (t *Table) RenderRow(row Row) error {
 					// No padding for empty cells
 					content = strings.Repeat(" ", col.Width)
 				} else {
-					// Empty cell with padding
+					// Empty cell with padding using strings.Builder
+					var cellBuilder strings.Builder
 					paddingStr := strings.Repeat(" ", t.padding)
-					content = paddingStr + strings.Repeat(" ", col.Width) + paddingStr
+					cellBuilder.WriteString(paddingStr)
+					cellBuilder.WriteString(strings.Repeat(" ", col.Width))
+					cellBuilder.WriteString(paddingStr)
+					content = cellBuilder.String()
 				}
 			}
 		}
 
-		line += content
+		builder.WriteString(content)
 
 		// Add vertical separator between columns (only if enabled and not the last column)
 		if t.borderConfig.Vertical && i < len(t.columns)-1 {
-			line += t.borders["vertical"]
+			builder.WriteString(t.borders["vertical"])
 		}
 	}
 
 	// Right border (only if enabled)
 	if t.borderConfig.Right {
-		line += t.borders["vertical"]
+		builder.WriteString(t.borders["vertical"])
 	}
 
-	line += "\n"
-	_, err := t.writer.Write([]byte(line))
+	builder.WriteString("\n")
+	_, err := t.writer.Write([]byte(builder.String()))
 	return err
 }
 
@@ -381,22 +390,26 @@ func (t *Table) formatCell(content string, width int, align string) string {
 	// Apply alignment to the content width
 	paddedContent := padString(content, width, align)
 
-	// Add padding spaces on both sides
+	// Add padding spaces on both sides using strings.Builder for efficiency
+	var builder strings.Builder
 	paddingStr := strings.Repeat(" ", t.padding)
-	return paddingStr + paddedContent + paddingStr
+	builder.WriteString(paddingStr)
+	builder.WriteString(paddedContent)
+	builder.WriteString(paddingStr)
+	return builder.String()
 }
 
 // RenderBorderLine renders horizontal border lines
 func (t *Table) RenderBorderLine(position string) error {
-	var line string
+	var builder strings.Builder
 
 	switch position {
 	case "top":
-		line = t.borders["top_left"]
+		builder.WriteString(t.borders["top_left"])
 	case "bottom":
-		line = t.borders["bottom_left"]
+		builder.WriteString(t.borders["bottom_left"])
 	default: // middle
-		line = t.borders["left_cross"]
+		builder.WriteString(t.borders["left_cross"])
 	}
 
 	for i, col := range t.columns {
@@ -405,31 +418,31 @@ func (t *Table) RenderBorderLine(position string) error {
 		if t.borderConfig.Padding {
 			cellWidth += (t.padding * 2)
 		}
-		line += strings.Repeat(t.borders["horizontal"], cellWidth)
+		builder.WriteString(strings.Repeat(t.borders["horizontal"], cellWidth))
 
 		if i < len(t.columns)-1 {
 			switch position {
 			case "top":
-				line += t.borders["top_cross"]
+				builder.WriteString(t.borders["top_cross"])
 			case "bottom":
-				line += t.borders["bottom_cross"]
+				builder.WriteString(t.borders["bottom_cross"])
 			default:
-				line += t.borders["cross"]
+				builder.WriteString(t.borders["cross"])
 			}
 		}
 	}
 
 	switch position {
 	case "top":
-		line += t.borders["top_right"]
+		builder.WriteString(t.borders["top_right"])
 	case "bottom":
-		line += t.borders["bottom_right"]
+		builder.WriteString(t.borders["bottom_right"])
 	default:
-		line += t.borders["right_cross"]
+		builder.WriteString(t.borders["right_cross"])
 	}
 
-	line += "\n"
-	_, err := t.writer.Write([]byte(line))
+	builder.WriteString("\n")
+	_, err := t.writer.Write([]byte(builder.String()))
 	return err
 }
 
