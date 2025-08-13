@@ -9,7 +9,7 @@ import (
 	"golang.org/x/text/unicode/norm"
 )
 
-// ANSI escape sequence patterns
+// ANSI escape sequence patterns.
 var (
 	// ANSI color codes and other escape sequences
 	ansiEscapeRegex = regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
@@ -17,7 +17,7 @@ var (
 	controlCharsRegex = regexp.MustCompile(`[\x00-\x1f\x7f]`)
 )
 
-// stripEscapeSequences removes ANSI escape sequences and control characters
+// stripEscapeSequences removes ANSI escape sequences and control characters.
 func stripEscapeSequences(s string) string {
 	// Remove ANSI escape sequences
 	s = ansiEscapeRegex.ReplaceAllString(s, "")
@@ -32,15 +32,15 @@ func stripEscapeSequences(s string) string {
 	return s
 }
 
-// StringWidth returns the display width of a string on terminal
-// This properly handles multibyte characters, combining characters, emojis, and ANSI escape sequences
-// This is the public version of stringWidth for external use
+// StringWidth returns the display width of a string on terminal.
+// This properly handles multibyte characters, combining characters, emojis, and ANSI escape sequences.
+// This is the public version of stringWidth for external use.
 func StringWidth(s string) int {
 	return stringWidth(s)
 }
 
-// stringWidth returns the display width of a string on terminal
-// This properly handles multibyte characters, combining characters, emojis, and ANSI escape sequences
+// stringWidth returns the display width of a string on terminal.
+// This properly handles multibyte characters, combining characters, emojis, and ANSI escape sequences.
 func stringWidth(s string) int {
 	// First remove escape sequences and control characters
 	cleaned := stripEscapeSequences(s)
@@ -50,8 +50,8 @@ func stringWidth(s string) int {
 	return runewidth.StringWidth(normalized)
 }
 
-// truncateString truncates a string to fit within the specified display width
-// Preserves ANSI escape sequences while calculating display width correctly
+// truncateString truncates a string to fit within the specified display width.
+// Preserves ANSI escape sequences while calculating display width correctly.
 func truncateString(s string, maxWidth int) string {
 	if maxWidth <= 0 {
 		return ""
@@ -81,7 +81,7 @@ func truncateString(s string, maxWidth int) string {
 	return result + "..."
 }
 
-// truncateWithEscapes truncates a string while preserving escape sequences
+// truncateWithEscapes truncates a string while preserving escape sequences.
 func truncateWithEscapes(s string, maxWidth int) string {
 	if maxWidth <= 0 {
 		return ""
@@ -151,8 +151,8 @@ func truncateWithEscapes(s string, maxWidth int) string {
 	return result.String()
 }
 
-// padString pads a string to the specified display width with spaces
-// Correctly handles ANSI escape sequences when calculating padding
+// padString pads a string to the specified display width with spaces.
+// Correctly handles ANSI escape sequences when calculating padding.
 func padString(s string, width int, align string) string {
 	currentWidth := stringWidth(s) // This now handles escape sequences correctly
 	if currentWidth >= width {
@@ -173,7 +173,7 @@ func padString(s string, width int, align string) string {
 	}
 }
 
-// spaces returns a string with n spaces
+// spaces returns a string with n spaces.
 func spaces(n int) string {
 	if n <= 0 {
 		return ""

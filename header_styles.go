@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-// ANSI escape sequences for text formatting
+// ANSI escape sequences for text formatting.
 const (
 	// Text formatting
 	AnsiReset     = "\x1b[0m"
@@ -58,7 +58,7 @@ const (
 	AnsiBgBrightWhite   = "\x1b[107m"
 )
 
-// HeaderStyle defines the styling for table headers
+// HeaderStyle defines the styling for table headers.
 type HeaderStyle struct {
 	// Text formatting
 	Bold      bool
@@ -78,7 +78,7 @@ type HeaderStyle struct {
 	CustomSuffix string // Custom ANSI sequence to append
 }
 
-// DefaultHeaderStyle returns a default header style with bold and underline
+// DefaultHeaderStyle returns a default header style with bold and underline.
 func DefaultHeaderStyle() HeaderStyle {
 	return HeaderStyle{
 		Bold:      true,
@@ -86,21 +86,21 @@ func DefaultHeaderStyle() HeaderStyle {
 	}
 }
 
-// BoldHeaderStyle returns a header style with bold text
+// BoldHeaderStyle returns a header style with bold text.
 func BoldHeaderStyle() HeaderStyle {
 	return HeaderStyle{
 		Bold: true,
 	}
 }
 
-// UnderlineHeaderStyle returns a header style with underlined text
+// UnderlineHeaderStyle returns a header style with underlined text.
 func UnderlineHeaderStyle() HeaderStyle {
 	return HeaderStyle{
 		Underline: true,
 	}
 }
 
-// ColoredHeaderStyle returns a header style with specified colors
+// ColoredHeaderStyle returns a header style with specified colors.
 func ColoredHeaderStyle(fgColor, bgColor string) HeaderStyle {
 	return HeaderStyle{
 		ForegroundColor: fgColor,
@@ -108,7 +108,7 @@ func ColoredHeaderStyle(fgColor, bgColor string) HeaderStyle {
 	}
 }
 
-// ApplyStyle applies the header style to the given text
+// ApplyStyle applies the header style to the given text.
 func (hs HeaderStyle) ApplyStyle(text string) string {
 	if hs.isEmpty() {
 		return text
@@ -163,7 +163,7 @@ func (hs HeaderStyle) ApplyStyle(text string) string {
 	return prefix + text + suffix
 }
 
-// getPrefix returns the ANSI prefix for the header style
+// getPrefix returns the ANSI prefix for the header style.
 func (hs HeaderStyle) getPrefix() string {
 	if hs.isEmpty() {
 		return ""
@@ -212,7 +212,7 @@ func (hs HeaderStyle) getPrefix() string {
 	return prefix
 }
 
-// getSuffix returns the ANSI suffix for the header style
+// getSuffix returns the ANSI suffix for the header style.
 func (hs HeaderStyle) getSuffix() string {
 	if hs.isEmpty() {
 		return ""
@@ -228,7 +228,7 @@ func (hs HeaderStyle) getSuffix() string {
 	return suffix
 }
 
-// isEmpty checks if the header style has any formatting applied
+// isEmpty checks if the header style has any formatting applied.
 func (hs HeaderStyle) isEmpty() bool {
 	return !hs.Bold && !hs.Underline && !hs.Italic && !hs.Dim &&
 		!hs.Blink && !hs.Reverse && !hs.Strike &&
@@ -236,7 +236,7 @@ func (hs HeaderStyle) isEmpty() bool {
 		hs.CustomPrefix == "" && hs.CustomSuffix == ""
 }
 
-// Combine combines this header style with another, with the other style taking precedence
+// Combine combines this header style with another, with the other style taking precedence.
 func (hs HeaderStyle) Combine(other HeaderStyle) HeaderStyle {
 	result := hs
 
@@ -282,22 +282,22 @@ func (hs HeaderStyle) Combine(other HeaderStyle) HeaderStyle {
 	return result
 }
 
-// RGB256 returns a 256-color ANSI code for foreground
+// RGB256 returns a 256-color ANSI code for foreground.
 func RGB256(colorCode int) string {
 	return "\x1b[38;5;" + strconv.Itoa(colorCode) + "m"
 }
 
-// BgRGB256 returns a 256-color ANSI code for background
+// BgRGB256 returns a 256-color ANSI code for background.
 func BgRGB256(colorCode int) string {
 	return "\x1b[48;5;" + strconv.Itoa(colorCode) + "m"
 }
 
-// TrueColorFg returns a true color (24-bit) ANSI code for foreground
+// TrueColorFg returns a true color (24-bit) ANSI code for foreground.
 func TrueColorFg(r, g, b int) string {
 	return fmt.Sprintf("\x1b[38;2;%d;%d;%dm", r, g, b)
 }
 
-// TrueColorBg returns a true color (24-bit) ANSI code for background
+// TrueColorBg returns a true color (24-bit) ANSI code for background.
 func TrueColorBg(r, g, b int) string {
 	return fmt.Sprintf("\x1b[48;2;%d;%d;%dm", r, g, b)
 }

@@ -10,7 +10,7 @@ import (
 
 var update = flag.Bool("update", false, "update golden files")
 
-// TestTableOutput tests various table configurations against golden files
+// TestTableOutput tests various table configurations against golden files.
 func TestTableOutput(t *testing.T) {
 	tests := []struct {
 		name string
@@ -85,11 +85,11 @@ func TestTableOutput(t *testing.T) {
 
 			if *update {
 				// Create testdata directory if it doesn't exist
-				if err := os.MkdirAll("testdata", 0755); err != nil {
+				if err := os.MkdirAll("testdata", 0o755); err != nil {
 					t.Fatalf("Failed to create testdata directory: %v", err)
 				}
 				// Write the output to golden file
-				if err := os.WriteFile(goldenFile, []byte(output), 0644); err != nil {
+				if err := os.WriteFile(goldenFile, []byte(output), 0o644); err != nil {
 					t.Fatalf("Failed to write golden file: %v", err)
 				}
 				return

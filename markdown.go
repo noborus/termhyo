@@ -5,13 +5,13 @@ import (
 	"strings"
 )
 
-// MarkdownRenderer implements Markdown table format with streaming support
+// MarkdownRenderer implements Markdown table format with streaming support.
 type MarkdownRenderer struct {
 	rendered     bool
 	bufferedRows []Row // Buffer rows for width calculation
 }
 
-// hasAutoWidth checks if any columns have auto width
+// hasAutoWidth checks if any columns have auto width.
 func hasAutoWidth(table *Table) bool {
 	if !table.align {
 		return false // No auto width in streaming mode
@@ -24,8 +24,8 @@ func hasAutoWidth(table *Table) bool {
 	return false
 }
 
-// AddRow adds a row for markdown rendering (buffered mode for width calculation)
-func (r *MarkdownRenderer) AddRow(table *Table, row Row) error {
+// AddRow adds a row for markdown rendering (buffered mode for width calculation).
+func (r *MarkdownRenderer) AddRow(_ *Table, row Row) error {
 	if r.rendered {
 		return fmt.Errorf("cannot add rows after table is rendered")
 	}
@@ -37,7 +37,7 @@ func (r *MarkdownRenderer) AddRow(table *Table, row Row) error {
 	return nil
 }
 
-// Render renders any remaining content (for streaming, this is just cleanup)
+// Render renders any remaining content (for streaming, this is just cleanup).
 func (r *MarkdownRenderer) Render(table *Table) error {
 	if r.rendered {
 		return fmt.Errorf("table already rendered")
@@ -71,12 +71,12 @@ func (r *MarkdownRenderer) Render(table *Table) error {
 	return nil
 }
 
-// IsRendered returns whether the table has been rendered
+// IsRendered returns whether the table has been rendered.
 func (r *MarkdownRenderer) IsRendered() bool {
 	return r.rendered
 }
 
-// renderMarkdownHeader renders the header row in Markdown format
+// renderMarkdownHeader renders the header row in Markdown format.
 func (r *MarkdownRenderer) renderMarkdownHeader(table *Table) error {
 	var line string
 	var stylePrefix, styleSuffix string
@@ -105,7 +105,7 @@ func (r *MarkdownRenderer) renderMarkdownHeader(table *Table) error {
 	return err
 }
 
-// renderMarkdownSeparator renders the separator row with alignment indicators
+// renderMarkdownSeparator renders the separator row with alignment indicators.
 func (r *MarkdownRenderer) renderMarkdownSeparator(table *Table) error {
 	line := "|"
 
@@ -123,7 +123,7 @@ func (r *MarkdownRenderer) renderMarkdownSeparator(table *Table) error {
 	return err
 }
 
-// renderMarkdownRow renders a data row in Markdown format
+// renderMarkdownRow renders a data row in Markdown format.
 func (r *MarkdownRenderer) renderMarkdownRow(table *Table, row Row) error {
 	line := "|"
 
@@ -158,7 +158,7 @@ func (r *MarkdownRenderer) renderMarkdownRow(table *Table, row Row) error {
 	return err
 }
 
-// getAlignmentSeparator returns the separator string with alignment indicators
+// getAlignmentSeparator returns the separator string with alignment indicators.
 func (r *MarkdownRenderer) getAlignmentSeparator(align string, width int) string {
 	switch align {
 	case "right":

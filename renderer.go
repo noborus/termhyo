@@ -2,14 +2,14 @@ package termhyo
 
 import "fmt"
 
-// Renderer defines the interface for different rendering strategies
+// Renderer defines the interface for different rendering strategies.
 type Renderer interface {
 	AddRow(table *Table, row Row) error
 	Render(table *Table) error
 	IsRendered() bool
 }
 
-// RenderMode defines when to start rendering
+// RenderMode defines when to start rendering.
 type RenderMode int
 
 const (
@@ -19,7 +19,7 @@ const (
 	StreamingMode
 )
 
-// String returns the string representation of the RenderMode
+// String returns the string representation of the RenderMode.
 func (m RenderMode) String() string {
 	switch m {
 	case BufferedMode:
@@ -31,11 +31,12 @@ func (m RenderMode) String() string {
 	}
 }
 
-// Buffered implements buffered rendering strategy
+// Buffered implements buffered rendering strategy.
 type Buffered struct {
 	rendered bool
 }
 
+// AddRow adds a row to the buffered renderer.
 func (r *Buffered) AddRow(table *Table, row Row) error {
 	if r.rendered {
 		return fmt.Errorf("cannot add rows after table is rendered")
@@ -45,6 +46,7 @@ func (r *Buffered) AddRow(table *Table, row Row) error {
 	return nil
 }
 
+// Render renders the buffered content all at once.
 func (r *Buffered) Render(table *Table) error {
 	if r.rendered {
 		return fmt.Errorf("table already rendered")
@@ -72,16 +74,18 @@ func (r *Buffered) Render(table *Table) error {
 	return nil
 }
 
+// IsRendered checks if the table has been rendered.
 func (r *Buffered) IsRendered() bool {
 	return r.rendered
 }
 
-// Streaming implements streaming rendering strategy
+// Streaming implements streaming rendering strategy.
 type Streaming struct {
 	rendered   bool
 	headerDone bool
 }
 
+// AddRow adds a row to the streaming renderer.
 func (r *Streaming) AddRow(table *Table, row Row) error {
 	if r.rendered {
 		return fmt.Errorf("cannot add rows after table is rendered")
@@ -97,6 +101,7 @@ func (r *Streaming) AddRow(table *Table, row Row) error {
 	return table.RenderRow(row)
 }
 
+// Render renders the streaming content, typically just the footer.
 func (r *Streaming) Render(table *Table) error {
 	if r.rendered {
 		return fmt.Errorf("table already rendered")
@@ -111,6 +116,7 @@ func (r *Streaming) Render(table *Table) error {
 	return nil
 }
 
+// IsRendered checks if the table has been rendered.
 func (r *Streaming) IsRendered() bool {
 	return r.rendered
 }

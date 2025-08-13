@@ -1,21 +1,20 @@
 package termhyo
 
-// Column defines column properties
+// Column defines column properties.
 type Column struct {
-	Key      string
-	Title    string
-	Width    int    // 0 means auto-width
-	MaxWidth int    // maximum width for auto-width columns
-	Align    string // "left", "right", "center"
+	Title    string // Column header title
+	Width    int    // Column width (0 = auto-width)
+	MaxWidth int    // Maximum width for auto-width columns (0 = no limit)
+	Align    string // Alignment: "left", "center", "right"
 }
 
-// Cell represents a table cell
+// Cell represents a table cell.
 type Cell struct {
-	Content string
-	Align   string // overrides column alignment if set
+	Content string // Cell content
+	Align   string // Cell-specific alignment override
 }
 
-// Row represents a table row
+// Row represents a table row.
 type Row struct {
-	Cells []Cell
+	Cells []Cell // Row cells
 }

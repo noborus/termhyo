@@ -19,7 +19,7 @@ func main() {
 	table := termhyo.NewTableWithStyle(os.Stdout, columns, termhyo.WithBorderStyle(termhyo.ASCIIStyle))
 
 	// Disable alignment for streaming mode using Table-level setting
-	//table.SetNoAlign(true)
+	// table.SetAlign(false)
 
 	// Simulate real-time data streaming
 	events := [][]string{

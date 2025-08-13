@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// TestIndividualFeatures tests specific features in isolation
+// TestIndividualFeatures tests specific features in isolation.
 func TestIndividualFeatures(t *testing.T) {
 	t.Run("HeaderStyleApply", func(t *testing.T) {
 		style := HeaderStyle{
@@ -76,7 +76,7 @@ func TestIndividualFeatures(t *testing.T) {
 	})
 }
 
-// TestConvenienceMethods tests the convenience methods for header styling
+// TestConvenienceMethods tests the convenience methods for header styling.
 func TestConvenienceMethods(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -151,7 +151,7 @@ func TestConvenienceMethods(t *testing.T) {
 	}
 }
 
-// TestRenderModes tests different rendering modes
+// TestRenderModes tests different rendering modes.
 func TestRenderModes(t *testing.T) {
 	t.Run("BufferedMode", func(t *testing.T) {
 		var buf bytes.Buffer

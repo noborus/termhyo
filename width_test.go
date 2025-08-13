@@ -299,7 +299,7 @@ func TestPadStringWithEscapes(t *testing.T) {
 	}
 }
 
-// Benchmark tests to ensure performance is acceptable
+// Benchmark tests to ensure performance is acceptable.
 func BenchmarkStringWidth(b *testing.B) {
 	testStrings := []string{
 		"hello world",

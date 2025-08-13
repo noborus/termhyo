@@ -1,9 +1,9 @@
 package termhyo
 
-// BorderStyle defines different border styles
+// BorderStyle defines different border styles.
 type BorderStyle string
 
-// BorderConfig holds border style configuration
+// BorderConfig holds border style configuration.
 type BorderConfig struct {
 	Chars    map[string]string
 	Top      bool // Show top border
@@ -16,23 +16,23 @@ type BorderConfig struct {
 }
 
 const (
-	// BoxDrawingStyle uses Unicode box drawing characters
+	// BoxDrawingStyle uses Unicode box drawing characters.
 	BoxDrawingStyle BorderStyle = "box"
-	// ASCIIStyle uses ASCII characters
+	// ASCIIStyle uses ASCII characters.
 	ASCIIStyle BorderStyle = "ascii"
-	// RoundedStyle uses rounded corners
+	// RoundedStyle uses rounded corners.
 	RoundedStyle BorderStyle = "rounded"
-	// DoubleStyle uses double line box drawing
+	// DoubleStyle uses double line box drawing.
 	DoubleStyle BorderStyle = "double"
-	// MinimalStyle uses minimal borders
+	// MinimalStyle uses minimal borders.
 	MinimalStyle BorderStyle = "minimal"
-	// MarkdownStyle uses Markdown table format
+	// MarkdownStyle uses Markdown table format.
 	MarkdownStyle BorderStyle = "markdown"
-	// TSVStyle uses tab separators only
+	// TSVStyle uses tab separators only.
 	TSVStyle BorderStyle = "tsv"
 )
 
-// Predefined border configurations
+// Predefined border configurations.
 var (
 	boxDrawingConfig = BorderConfig{
 		Chars: map[string]string{
@@ -196,7 +196,7 @@ var (
 	}
 )
 
-// getBorderConfig returns border configuration for the specified style
+// getBorderConfig returns border configuration for the specified style.
 func getBorderConfig(style BorderStyle) BorderConfig {
 	switch style {
 	case ASCIIStyle:

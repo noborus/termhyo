@@ -5,13 +5,13 @@ import (
 	"strings"
 )
 
-// TableStyle represents the complete styling configuration for a table
+// TableStyle represents the complete styling configuration for a table.
 type TableStyle struct {
 	BorderStyle BorderStyle // Border style configuration
 	HeaderStyle HeaderStyle // Header styling configuration
 }
 
-// DefaultTableStyle returns the default table style
+// DefaultTableStyle returns the default table style.
 func DefaultTableStyle() TableStyle {
 	return TableStyle{
 		BorderStyle: BoxDrawingStyle,
@@ -19,7 +19,7 @@ func DefaultTableStyle() TableStyle {
 	}
 }
 
-// WithBorderStyle creates a TableStyle with the specified border style
+// WithBorderStyle creates a TableStyle with the specified border style.
 func WithBorderStyle(borderStyle BorderStyle) TableStyle {
 	return TableStyle{
 		BorderStyle: borderStyle,
@@ -27,7 +27,7 @@ func WithBorderStyle(borderStyle BorderStyle) TableStyle {
 	}
 }
 
-// WithHeaderStyle creates a TableStyle with the specified header style
+// WithHeaderStyle creates a TableStyle with the specified header style.
 func WithHeaderStyle(headerStyle HeaderStyle) TableStyle {
 	return TableStyle{
 		BorderStyle: BoxDrawingStyle,
@@ -35,7 +35,7 @@ func WithHeaderStyle(headerStyle HeaderStyle) TableStyle {
 	}
 }
 
-// WithStyles creates a TableStyle with both border and header styles
+// WithStyles creates a TableStyle with both border and header styles.
 func WithStyles(borderStyle BorderStyle, headerStyle HeaderStyle) TableStyle {
 	return TableStyle{
 		BorderStyle: borderStyle,
@@ -43,7 +43,7 @@ func WithStyles(borderStyle BorderStyle, headerStyle HeaderStyle) TableStyle {
 	}
 }
 
-// Table represents the main table structure
+// Table represents the main table structure.
 type Table struct {
 	columns      []Column
 	rows         []Row
@@ -58,12 +58,12 @@ type Table struct {
 	headerStyle  HeaderStyle // styling for header row
 }
 
-// GetBorderConfig returns the current border configuration
+// GetBorderConfig returns the current border configuration.
 func (t *Table) GetBorderConfig() BorderConfig {
 	return t.borderConfig
 }
 
-// SetAlign sets whether to skip alignment for all columns
+// SetAlign sets whether to skip alignment for all columns.
 func (t *Table) SetAlign(align bool) {
 	t.align = align
 	// Recalculate render mode when alignment setting changes
@@ -79,17 +79,17 @@ func (t *Table) SetAlign(align bool) {
 	}
 }
 
-// GetAlign returns the current align setting
+// GetAlign returns the current align setting.
 func (t *Table) GetAlign() bool {
 	return t.align
 }
 
-// NewTable creates a new table with default styling
+// NewTable creates a new table with default styling.
 func NewTable(writer io.Writer, columns []Column) *Table {
 	return NewTableWithStyle(writer, columns, DefaultTableStyle())
 }
 
-// NewTableWithStyle creates a new table with specified styling
+// NewTableWithStyle creates a new table with specified styling.
 func NewTableWithStyle(writer io.Writer, columns []Column, style TableStyle) *Table {
 	borderConfig := getBorderConfig(style.BorderStyle)
 
@@ -120,7 +120,7 @@ func NewTableWithStyle(writer io.Writer, columns []Column, style TableStyle) *Ta
 	return t
 }
 
-// determineRenderMode decides whether to use buffered or streaming mode
+// determineRenderMode decides whether to use buffered or streaming mode.
 func (t *Table) determineRenderMode() RenderMode {
 	hasAutoWidth := false
 
@@ -139,7 +139,7 @@ func (t *Table) determineRenderMode() RenderMode {
 	return BufferedMode
 }
 
-// AddRow adds a row to the table
+// AddRow adds a row to the table.
 func (t *Table) AddRow(cells ...string) error {
 	row := Row{
 		Cells: make([]Cell, len(cells)),
@@ -152,18 +152,18 @@ func (t *Table) AddRow(cells ...string) error {
 	return t.renderer.AddRow(t, row)
 }
 
-// AddRowCells adds a row with detailed cell configuration
+// AddRowCells adds a row with detailed cell configuration.
 func (t *Table) AddRowCells(cells ...Cell) error {
 	row := Row{Cells: cells}
 	return t.renderer.AddRow(t, row)
 }
 
-// Render renders the complete table
+// Render renders the complete table.
 func (t *Table) Render() error {
 	return t.renderer.Render(t)
 }
 
-// CalculateColumnWidths calculates optimal widths for auto-width columns
+// CalculateColumnWidths calculates optimal widths for auto-width columns.
 func (t *Table) CalculateColumnWidths() {
 	// Early return if no auto-width columns
 	autoWidthColumns := make([]int, 0, len(t.columns)) // Track auto-width column indices
@@ -207,7 +207,7 @@ func (t *Table) CalculateColumnWidths() {
 	}
 }
 
-// RenderHeader renders the table header
+// RenderHeader renders the table header.
 func (t *Table) RenderHeader() error {
 	// Top border (only if enabled)
 	if t.borderConfig.Top {
@@ -240,7 +240,7 @@ func (t *Table) RenderHeader() error {
 	return nil
 }
 
-// RenderHeaderRow renders a header row with full-line styling
+// RenderHeaderRow renders a header row with full-line styling.
 func (t *Table) RenderHeaderRow(row Row) error {
 	var builder strings.Builder
 	var stylePrefix, styleSuffix string
@@ -311,7 +311,7 @@ func (t *Table) RenderHeaderRow(row Row) error {
 	return err
 }
 
-// RenderRow renders a single row
+// RenderRow renders a single row.
 func (t *Table) RenderRow(row Row) error {
 	var builder strings.Builder
 
@@ -369,7 +369,7 @@ func (t *Table) RenderRow(row Row) error {
 	return err
 }
 
-// formatCell formats cell content with alignment and padding
+// formatCell formats cell content with alignment and padding.
 func (t *Table) formatCell(content string, width int, align string) string {
 	contentWidth := stringWidth(content)
 	// Check if padding is disabled for this border style
@@ -399,7 +399,7 @@ func (t *Table) formatCell(content string, width int, align string) string {
 	return builder.String()
 }
 
-// RenderBorderLine renders horizontal border lines
+// RenderBorderLine renders horizontal border lines.
 func (t *Table) RenderBorderLine(position string) error {
 	var builder strings.Builder
 
@@ -446,7 +446,7 @@ func (t *Table) RenderBorderLine(position string) error {
 	return err
 }
 
-// RenderFooter renders the table footer
+// RenderFooter renders the table footer.
 func (t *Table) RenderFooter() error {
 	// Bottom border (only if enabled)
 	if t.borderConfig.Bottom {
@@ -455,36 +455,36 @@ func (t *Table) RenderFooter() error {
 	return nil
 }
 
-// SetRenderer allows setting a custom renderer
+// SetRenderer allows setting a custom renderer.
 func (t *Table) SetRenderer(renderer Renderer) {
 	t.renderer = renderer
 }
 
-// SetBorderStyle changes the border style of the table
+// SetBorderStyle changes the border style of the table.
 func (t *Table) SetBorderStyle(style BorderStyle) {
 	t.borderStyle = style
 	t.borderConfig = getBorderConfig(style)
 	t.borders = t.borderConfig.Chars
 }
 
-// GetBorderStyle returns the current border style
+// GetBorderStyle returns the current border style.
 func (t *Table) GetBorderStyle() BorderStyle {
 	return t.borderStyle
 }
 
-// SetBorderConfig allows setting a custom border configuration
+// SetBorderConfig allows setting a custom border configuration.
 func (t *Table) SetBorderConfig(config BorderConfig) {
 	t.borderConfig = config
 	t.borders = config.Chars
 }
 
-// SetHeaderStyle sets the styling for header row
+// SetHeaderStyle sets the styling for header row.
 func (t *Table) SetHeaderStyle(style HeaderStyle) {
 	t.headerStyle = style
 }
 
-// SetHeaderStyleWithoutSeparator sets the header style and disables the header separator line
-// This is a convenience method for the common use case of styled headers not needing separators
+// SetHeaderStyleWithoutSeparator sets the header style and disables the header separator line.
+// This is a convenience method for the common use case of styled headers not needing separators.
 func (t *Table) SetHeaderStyleWithoutSeparator(style HeaderStyle) {
 	t.headerStyle = style
 	// Disable header separator line since styled headers provide visual distinction
@@ -492,8 +492,8 @@ func (t *Table) SetHeaderStyleWithoutSeparator(style HeaderStyle) {
 	t.borders = t.borderConfig.Chars
 }
 
-// SetHeaderStyleWithoutBorders sets the header style and disables all horizontal borders
-// This creates a completely clean look with only the styled header for distinction
+// SetHeaderStyleWithoutBorders sets the header style and disables all horizontal borders.
+// This creates a completely clean look with only the styled header for distinction.
 func (t *Table) SetHeaderStyleWithoutBorders(style HeaderStyle) {
 	t.headerStyle = style
 	// Disable all horizontal borders for the cleanest look
@@ -503,8 +503,8 @@ func (t *Table) SetHeaderStyleWithoutBorders(style HeaderStyle) {
 	t.borders = t.borderConfig.Chars
 }
 
-// SetHeaderStyleBorderless sets the header style and disables ALL borders including left/right
-// This creates the most minimal table with only styled header and column spacing
+// SetHeaderStyleBorderless sets the header style and disables ALL borders including left/right.
+// This creates the most minimal table with only styled header and column spacing.
 func (t *Table) SetHeaderStyleBorderless(style HeaderStyle) {
 	t.headerStyle = style
 	// Disable all borders but keep internal vertical separators for column distinction
@@ -517,8 +517,8 @@ func (t *Table) SetHeaderStyleBorderless(style HeaderStyle) {
 	t.borders = t.borderConfig.Chars
 }
 
-// SetHeaderStyleMinimal sets the header style and disables absolutely ALL borders and separators
-// This creates the most minimal possible table with only styled header and whitespace separation
+// SetHeaderStyleMinimal sets the header style and disables absolutely ALL borders and separators.
+// This creates the most minimal possible table with only styled header and whitespace separation.
 func (t *Table) SetHeaderStyleMinimal(style HeaderStyle) {
 	t.headerStyle = style
 	// Disable absolutely everything
@@ -531,7 +531,7 @@ func (t *Table) SetHeaderStyleMinimal(style HeaderStyle) {
 	t.borders = t.borderConfig.Chars
 }
 
-// GetHeaderStyle returns the current header style
+// GetHeaderStyle returns the current header style.
 func (t *Table) GetHeaderStyle() HeaderStyle {
 	return t.headerStyle
 }
