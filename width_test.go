@@ -225,63 +225,63 @@ func TestPadStringWithEscapes(t *testing.T) {
 		name      string
 		input     string
 		width     int
-		align     string
+		align     Alignment
 		expectLen int
 	}{
 		{
 			name:      "left align plain text",
 			input:     "hello",
 			width:     10,
-			align:     "left",
+			align:     AlignLeft,
 			expectLen: 10,
 		},
 		{
 			name:      "right align plain text",
 			input:     "hello",
 			width:     10,
-			align:     "right",
+			align:     AlignRight,
 			expectLen: 10,
 		},
 		{
 			name:      "center align plain text",
 			input:     "hello",
 			width:     10,
-			align:     "center",
+			align:     AlignCenter,
 			expectLen: 10,
 		},
 		{
 			name:      "ANSI color left align",
 			input:     "\x1b[31mhello\x1b[0m",
 			width:     10,
-			align:     "left",
+			align:     AlignLeft,
 			expectLen: 10,
 		},
 		{
 			name:      "ANSI color right align",
 			input:     "\x1b[31mhello\x1b[0m",
 			width:     10,
-			align:     "right",
+			align:     AlignRight,
 			expectLen: 10,
 		},
 		{
 			name:      "ANSI color center align",
 			input:     "\x1b[31mhello\x1b[0m",
 			width:     10,
-			align:     "center",
+			align:     AlignCenter,
 			expectLen: 10,
 		},
 		{
 			name:      "Japanese with ANSI",
 			input:     "\x1b[31mこんにちは\x1b[0m",
 			width:     15,
-			align:     "center",
+			align:     AlignCenter,
 			expectLen: 15,
 		},
 		{
 			name:      "no padding needed",
 			input:     "\x1b[31mhello world\x1b[0m",
 			width:     10,
-			align:     "left",
+			align:     AlignLeft,
 			expectLen: 11, // original width is larger
 		},
 	}

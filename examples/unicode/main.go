@@ -9,10 +9,10 @@ import (
 func main() {
 	// Define columns
 	columns := []termhyo.Column{
-		{Title: "Status", Width: 0, Align: "center"},
-		{Title: "Task", Width: 0, Align: "left"},
-		{Title: "Progress", Width: 0, Align: "center"},
-		{Title: "Assignee", Width: 0, Align: "left"},
+		{Title: "Status", Width: 0, Align: termhyo.AlignCenter},
+		{Title: "Task", Width: 0, Align: termhyo.AlignLeft},
+		{Title: "Progress", Width: 0, Align: termhyo.AlignCenter},
+		{Title: "Assignee", Width: 0, Align: termhyo.AlignLeft},
 	}
 
 	// Create table with default style

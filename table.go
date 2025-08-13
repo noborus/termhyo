@@ -223,7 +223,7 @@ func (t *Table) RenderHeader() error {
 	for i, col := range t.columns {
 		headerRow.Cells[i] = Cell{
 			Content: col.Title,
-			Align:   "center",
+			Align:   AlignCenter,
 		}
 	}
 
@@ -268,7 +268,7 @@ func (t *Table) RenderHeaderRow(row Row) error {
 			// Apply alignment if not disabled
 			if t.align {
 				align := col.Align
-				if cell.Align != "" {
+				if cell.Align != AlignDefault {
 					align = cell.Align
 				}
 				content = t.formatCell(content, col.Width, align)
@@ -329,7 +329,7 @@ func (t *Table) RenderRow(row Row) error {
 			// Apply alignment if not disabled
 			if t.align {
 				align := col.Align
-				if cell.Align != "" {
+				if cell.Align != AlignDefault {
 					align = cell.Align
 				}
 				content = t.formatCell(content, col.Width, align)
@@ -370,7 +370,7 @@ func (t *Table) RenderRow(row Row) error {
 }
 
 // formatCell formats cell content with alignment and padding.
-func (t *Table) formatCell(content string, width int, align string) string {
+func (t *Table) formatCell(content string, width int, align Alignment) string {
 	contentWidth := stringWidth(content)
 	// Check if padding is disabled for this border style
 	if !t.borderConfig.Padding {

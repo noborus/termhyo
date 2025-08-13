@@ -72,9 +72,9 @@ import (
 
 func main() {
     columns := []termhyo.Column{
-        {Title: "ID", Width: 0, Align: "right"},
-        {Title: "Name", Width: 0, Align: "left"},
-        {Title: "Score", Width: 0, Align: "center"},
+        {Title: "ID", Width: 0, Align: termhyo.AlignRight},
+        {Title: "Name", Width: 0, Align: termhyo.AlignLeft},
+        {Title: "Score", Width: 0, Align: termhyo.AlignCenter},
     }
 
     table := termhyo.NewTable(os.Stdout, columns)
@@ -88,6 +88,32 @@ func main() {
 
 ```go
 table := termhyo.NewTableWithStyle(os.Stdout, columns, termhyo.ASCIIStyle)
+```
+
+### Text Alignment
+
+termhyo provides type-safe alignment options:
+
+```go
+// Available alignment constants
+termhyo.AlignLeft     // Left-aligned text
+termhyo.AlignCenter   // Center-aligned text
+termhyo.AlignRight    // Right-aligned text
+termhyo.AlignDefault  // Default/unspecified alignment (defaults to left)
+
+// Column-level alignment
+columns := []termhyo.Column{
+    {Title: "ID", Align: termhyo.AlignRight},
+    {Title: "Name", Align: termhyo.AlignLeft},
+    {Title: "Score", Align: termhyo.AlignCenter},
+}
+
+// Cell-level alignment (overrides column alignment)
+table.AddRowCells(
+    termhyo.Cell{Content: "1", Align: termhyo.AlignCenter},
+    termhyo.Cell{Content: "Alice"},  // Uses column alignment
+    termhyo.Cell{Content: "85"},
+)
 ```
 
 ### Custom Border Configuration

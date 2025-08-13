@@ -10,9 +10,9 @@ import (
 func main() {
 	// Define columns
 	columns := []termhyo.Column{
-		{Title: "Style", Width: 0, Align: "left"},
-		{Title: "Description", Width: 0, Align: "left"},
-		{Title: "Borders", Width: 0, Align: "center"},
+		{Title: "Style", Width: 0, Align: termhyo.AlignLeft},
+		{Title: "Description", Width: 0, Align: termhyo.AlignLeft},
+		{Title: "Borders", Width: 0, Align: termhyo.AlignCenter},
 	}
 
 	// Test different border configurations
@@ -46,9 +46,9 @@ func main() {
 	// Example of custom border configuration - only internal separators
 	fmt.Printf("=== Custom: Internal separators only ===\n")
 	customColumns := []termhyo.Column{
-		{Title: "Column1", Width: 0, Align: "left"},
-		{Title: "Column2", Width: 0, Align: "center"},
-		{Title: "Column3", Width: 0, Align: "right"},
+		{Title: "Column1", Width: 0, Align: termhyo.AlignLeft},
+		{Title: "Column2", Width: 0, Align: termhyo.AlignCenter},
+		{Title: "Column3", Width: 0, Align: termhyo.AlignRight},
 	}
 
 	customTable := termhyo.NewTable(os.Stdout, customColumns)

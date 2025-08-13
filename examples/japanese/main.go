@@ -9,11 +9,11 @@ import (
 func main() {
 	// Define columns
 	columns := []termhyo.Column{
-		{Title: "ID", Width: 0, Align: "right"},
-		{Title: "名前", Width: 0, Align: "left"},
-		{Title: "スコア", Width: 0, Align: "center"},
-		{Title: "グレード", Width: 0, Align: "center"},
-		{Title: "コメント", Width: 0, Align: "left"},
+		{Title: "ID", Width: 0, Align: termhyo.AlignRight},
+		{Title: "名前", Width: 0, Align: termhyo.AlignLeft},
+		{Title: "スコア", Width: 0, Align: termhyo.AlignCenter},
+		{Title: "グレード", Width: 0, Align: termhyo.AlignCenter},
+		{Title: "コメント", Width: 0, Align: termhyo.AlignLeft},
 	}
 
 	// Create table with default style

@@ -10,9 +10,9 @@ import (
 func main() {
 	// Define columns
 	columns := []termhyo.Column{
-		{Title: "Style", Width: 15, Align: "left"},
-		{Title: "Description", Width: 30, Align: "left"},
-		{Title: "Unicode", Width: 10, Align: "center"},
+		{Title: "Style", Width: 15, Align: termhyo.AlignLeft},
+		{Title: "Description", Width: 30, Align: termhyo.AlignLeft},
+		{Title: "Unicode", Width: 10, Align: termhyo.AlignCenter},
 	}
 
 	// Sample data

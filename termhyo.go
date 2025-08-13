@@ -20,9 +20,9 @@ termhyo offers comprehensive table rendering capabilities:
 Creating a simple table:
 
 	columns := []termhyo.Column{
-		{Title: "ID", Width: 0, Align: "right"},
-		{Title: "Name", Width: 0, Align: "left"},
-		{Title: "Age", Width: 0, Align: "center"},
+		{Title: "ID", Width: 0, Align: termhyo.AlignRight},
+		{Title: "Name", Width: 0, Align: termhyo.AlignLeft},
+		{Title: "Age", Width: 0, Align: termhyo.AlignCenter},
 	}
 
 	table := termhyo.NewTable(os.Stdout, columns)

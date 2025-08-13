@@ -153,7 +153,7 @@ func truncateWithEscapes(s string, maxWidth int) string {
 
 // padString pads a string to the specified display width with spaces.
 // Correctly handles ANSI escape sequences when calculating padding.
-func padString(s string, width int, align string) string {
+func padString(s string, width int, align Alignment) string {
 	currentWidth := stringWidth(s) // This now handles escape sequences correctly
 	if currentWidth >= width {
 		return s
@@ -162,13 +162,13 @@ func padString(s string, width int, align string) string {
 	padding := width - currentWidth
 
 	switch align {
-	case "right":
+	case AlignRight:
 		return spaces(padding) + s
-	case "center":
+	case AlignCenter:
 		leftPad := padding / 2
 		rightPad := padding - leftPad
 		return spaces(leftPad) + s + spaces(rightPad)
-	default: // left
+	default: // AlignLeft or AlignDefault
 		return s + spaces(padding)
 	}
 }
