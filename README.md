@@ -25,7 +25,7 @@ go get github.com/noborus/termhyo
 
 ### Requirements
 
-- Go 1.21 or later
+- Go 1.23 or later
 
 ## File Structure
 
