@@ -162,13 +162,13 @@ func padString(s string, width int, align Alignment) string {
 	padding := width - currentWidth
 
 	switch align {
-	case AlignRight:
+	case Right:
 		return spaces(padding) + s
-	case AlignCenter:
+	case Center:
 		leftPad := padding / 2
 		rightPad := padding - leftPad
 		return spaces(leftPad) + s + spaces(rightPad)
-	default: // AlignLeft or AlignDefault
+	default: // Left or Default
 		return s + spaces(padding)
 	}
 }

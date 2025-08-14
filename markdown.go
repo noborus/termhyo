@@ -94,7 +94,7 @@ func (r *MarkdownRenderer) renderMarkdownHeader(table *Table) error {
 		// Apply alignment to header content (headers are typically centered)
 		content := col.Title
 		if table.align {
-			content = table.formatCell(col.Title, col.Width, AlignCenter)
+			content = table.formatCell(col.Title, col.Width, Center)
 		}
 		line += content + "|"
 	}
@@ -145,7 +145,7 @@ func (r *MarkdownRenderer) renderMarkdownRow(table *Table, row Row) error {
 		var content string
 		// Apply column alignment to cell content
 		cellAlign := col.Align
-		if cells[i].Align != AlignDefault {
+		if cells[i].Align != Default {
 			cellAlign = cells[i].Align // Cell-specific alignment overrides column alignment
 		}
 		// Format cell content with alignment
@@ -161,17 +161,17 @@ func (r *MarkdownRenderer) renderMarkdownRow(table *Table, row Row) error {
 // getAlignmentSeparator returns the separator string with alignment indicators.
 func (r *MarkdownRenderer) getAlignmentSeparator(align Alignment, width int) string {
 	switch align {
-	case AlignRight:
+	case Right:
 		if width <= 1 {
 			return ":"
 		}
 		return strings.Repeat("-", width-1) + ":"
-	case AlignCenter:
+	case Center:
 		if width <= 2 {
 			return "::"
 		}
 		return ":" + strings.Repeat("-", width-2) + ":"
-	default: // AlignLeft, AlignDefault, or no alignment
+	default: // Left, Default, or no alignment
 		return strings.Repeat("-", width)
 	}
 }

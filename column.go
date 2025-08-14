@@ -4,14 +4,14 @@ package termhyo
 type Alignment string
 
 const (
-	// AlignDefault represents default/unspecified alignment.
-	AlignDefault Alignment = ""
-	// AlignLeft aligns text to the left.
-	AlignLeft Alignment = "left"
-	// AlignCenter aligns text to the center.
-	AlignCenter Alignment = "center"
-	// AlignRight aligns text to the right.
-	AlignRight Alignment = "right"
+	// Default represents default/unspecified alignment.
+	Default Alignment = ""
+	// Left aligns text to the left.
+	Left Alignment = "left"
+	// Center aligns text to the center.
+	Center Alignment = "center"
+	// Right aligns text to the right.
+	Right Alignment = "right"
 )
 
 // String returns the string representation of the alignment.
@@ -24,7 +24,7 @@ type Column struct {
 	Title    string    // Column header title
 	Width    int       // Column width (0 = auto-width)
 	MaxWidth int       // Maximum width for auto-width columns (0 = no limit)
-	Align    Alignment // Alignment: AlignLeft, AlignCenter, AlignRight
+	Align    Alignment // Alignment: Left, Center, Right
 }
 
 // Cell represents a table cell.

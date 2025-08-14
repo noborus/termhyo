@@ -72,9 +72,9 @@ import (
 
 func main() {
     columns := []termhyo.Column{
-        {Title: "ID", Width: 0, Align: termhyo.AlignRight},
-        {Title: "Name", Width: 0, Align: termhyo.AlignLeft},
-        {Title: "Score", Width: 0, Align: termhyo.AlignCenter},
+        {Title: "ID", Width: 0, Align: termhyo.Right},
+        {Title: "Name", Width: 0, Align: termhyo.Left},
+        {Title: "Score", Width: 0, Align: termhyo.Center},
     }
 
     table := termhyo.NewTable(os.Stdout, columns)
@@ -96,21 +96,21 @@ termhyo provides type-safe alignment options:
 
 ```go
 // Available alignment constants
-termhyo.AlignLeft     // Left-aligned text
-termhyo.AlignCenter   // Center-aligned text
-termhyo.AlignRight    // Right-aligned text
-termhyo.AlignDefault  // Default/unspecified alignment (defaults to left)
+termhyo.Left     // Left-aligned text
+termhyo.Center   // Center-aligned text
+termhyo.Right    // Right-aligned text
+termhyo.Default  // Default/unspecified alignment (defaults to left)
 
 // Column-level alignment
 columns := []termhyo.Column{
-    {Title: "ID", Align: termhyo.AlignRight},
-    {Title: "Name", Align: termhyo.AlignLeft},
-    {Title: "Score", Align: termhyo.AlignCenter},
+    {Title: "ID", Align: termhyo.Right},
+    {Title: "Name", Align: termhyo.Left},
+    {Title: "Score", Align: termhyo.Center},
 }
 
 // Cell-level alignment (overrides column alignment)
 table.AddRowCells(
-    termhyo.Cell{Content: "1", Align: termhyo.AlignCenter},
+    termhyo.Cell{Content: "1", Align: termhyo.Center},
     termhyo.Cell{Content: "Alice"},  // Uses column alignment
     termhyo.Cell{Content: "85"},
 )

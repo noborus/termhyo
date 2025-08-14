@@ -10,10 +10,10 @@ import (
 func main() {
 	// Define columns
 	columns := []termhyo.Column{
-		{Title: "ID", Width: 0, Align: termhyo.AlignRight},
-		{Title: "Product", Width: 0, Align: termhyo.AlignLeft},
-		{Title: "Price", Width: 0, Align: termhyo.AlignRight},
-		{Title: "Status", Width: 0, Align: termhyo.AlignCenter},
+		{Title: "ID", Width: 0, Align: termhyo.Right},
+		{Title: "Product", Width: 0, Align: termhyo.Left},
+		{Title: "Price", Width: 0, Align: termhyo.Right},
+		{Title: "Status", Width: 0, Align: termhyo.Center},
 	}
 
 	fmt.Println("=== Default (No Header Style) ===")

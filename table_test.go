@@ -111,10 +111,10 @@ func TestTableOutput(t *testing.T) {
 func testBasicTable() string {
 	var buf bytes.Buffer
 	columns := []Column{
-		{Title: "ID", Width: 0, Align: AlignRight},
-		{Title: "Name", Width: 0, Align: AlignLeft},
-		{Title: "Age", Width: 0, Align: AlignCenter},
-		{Title: "City", Width: 0, Align: AlignLeft},
+		{Title: "ID", Width: 0, Align: Right},
+		{Title: "Name", Width: 0, Align: Left},
+		{Title: "Age", Width: 0, Align: Center},
+		{Title: "City", Width: 0, Align: Left},
 	}
 
 	table := NewTable(&buf, columns)
@@ -129,9 +129,9 @@ func testBasicTable() string {
 func testHeaderStyleBold() string {
 	var buf bytes.Buffer
 	columns := []Column{
-		{Title: "Product", Width: 0, Align: AlignLeft},
-		{Title: "Price", Width: 0, Align: AlignRight},
-		{Title: "Status", Width: 0, Align: AlignCenter},
+		{Title: "Product", Width: 0, Align: Left},
+		{Title: "Price", Width: 0, Align: Right},
+		{Title: "Status", Width: 0, Align: Center},
 	}
 
 	table := NewTable(&buf, columns)
@@ -146,9 +146,9 @@ func testHeaderStyleBold() string {
 func testHeaderStyleBackground() string {
 	var buf bytes.Buffer
 	columns := []Column{
-		{Title: "Product", Width: 0, Align: AlignLeft},
-		{Title: "Price", Width: 0, Align: AlignRight},
-		{Title: "Status", Width: 0, Align: AlignCenter},
+		{Title: "Product", Width: 0, Align: Left},
+		{Title: "Price", Width: 0, Align: Right},
+		{Title: "Status", Width: 0, Align: Center},
 	}
 
 	table := NewTable(&buf, columns)
@@ -168,9 +168,9 @@ func testHeaderStyleBackground() string {
 func testHeaderStyleWithoutSeparator() string {
 	var buf bytes.Buffer
 	columns := []Column{
-		{Title: "Product", Width: 0, Align: AlignLeft},
-		{Title: "Price", Width: 0, Align: AlignRight},
-		{Title: "Status", Width: 0, Align: AlignCenter},
+		{Title: "Product", Width: 0, Align: Left},
+		{Title: "Price", Width: 0, Align: Right},
+		{Title: "Status", Width: 0, Align: Center},
 	}
 
 	table := NewTable(&buf, columns)
@@ -190,9 +190,9 @@ func testHeaderStyleWithoutSeparator() string {
 func testHeaderStyleWithoutBorders() string {
 	var buf bytes.Buffer
 	columns := []Column{
-		{Title: "Product", Width: 0, Align: AlignLeft},
-		{Title: "Price", Width: 0, Align: AlignRight},
-		{Title: "Status", Width: 0, Align: AlignCenter},
+		{Title: "Product", Width: 0, Align: Left},
+		{Title: "Price", Width: 0, Align: Right},
+		{Title: "Status", Width: 0, Align: Center},
 	}
 
 	table := NewTable(&buf, columns)
@@ -212,9 +212,9 @@ func testHeaderStyleWithoutBorders() string {
 func testHeaderStyleBorderless() string {
 	var buf bytes.Buffer
 	columns := []Column{
-		{Title: "Product", Width: 0, Align: AlignLeft},
-		{Title: "Price", Width: 0, Align: AlignRight},
-		{Title: "Status", Width: 0, Align: AlignCenter},
+		{Title: "Product", Width: 0, Align: Left},
+		{Title: "Price", Width: 0, Align: Right},
+		{Title: "Status", Width: 0, Align: Center},
 	}
 
 	table := NewTable(&buf, columns)
@@ -234,9 +234,9 @@ func testHeaderStyleBorderless() string {
 func testHeaderStyleMinimal() string {
 	var buf bytes.Buffer
 	columns := []Column{
-		{Title: "Product", Width: 0, Align: AlignLeft},
-		{Title: "Price", Width: 0, Align: AlignRight},
-		{Title: "Status", Width: 0, Align: AlignCenter},
+		{Title: "Product", Width: 0, Align: Left},
+		{Title: "Price", Width: 0, Align: Right},
+		{Title: "Status", Width: 0, Align: Center},
 	}
 
 	table := NewTable(&buf, columns)
@@ -256,8 +256,8 @@ func testHeaderStyleMinimal() string {
 func testDifferentBorderStyles() string {
 	var buf bytes.Buffer
 	columns := []Column{
-		{Title: "Style", Width: 0, Align: AlignLeft},
-		{Title: "Description", Width: 0, Align: AlignLeft},
+		{Title: "Style", Width: 0, Align: Left},
+		{Title: "Description", Width: 0, Align: Left},
 	}
 
 	// Box Drawing Style
@@ -286,9 +286,9 @@ func testDifferentBorderStyles() string {
 func testMarkdownTable() string {
 	var buf bytes.Buffer
 	columns := []Column{
-		{Title: "Feature", Width: 0, Align: AlignLeft},
-		{Title: "Status", Width: 0, Align: AlignCenter},
-		{Title: "Priority", Width: 0, Align: AlignRight},
+		{Title: "Feature", Width: 0, Align: Left},
+		{Title: "Status", Width: 0, Align: Center},
+		{Title: "Priority", Width: 0, Align: Right},
 	}
 
 	table := NewTableWithStyle(&buf, columns, WithBorderStyle(MarkdownStyle))
@@ -303,9 +303,9 @@ func testMarkdownTable() string {
 func testMarkdownWithHeaderStyle() string {
 	var buf bytes.Buffer
 	columns := []Column{
-		{Title: "Feature", Width: 0, Align: AlignLeft},
-		{Title: "Status", Width: 0, Align: AlignCenter},
-		{Title: "Priority", Width: 0, Align: AlignRight},
+		{Title: "Feature", Width: 0, Align: Left},
+		{Title: "Status", Width: 0, Align: Center},
+		{Title: "Priority", Width: 0, Align: Right},
 	}
 
 	headerStyle := HeaderStyle{
@@ -324,9 +324,9 @@ func testMarkdownWithHeaderStyle() string {
 func testStreamingMode() string {
 	var buf bytes.Buffer
 	columns := []Column{
-		{Title: "ID", Width: 3, Align: AlignRight},       // Fixed width for streaming
-		{Title: "Name", Width: 8, Align: AlignLeft},      // Fixed width for streaming
-		{Title: "Status", Width: 10, Align: AlignCenter}, // Fixed width for streaming
+		{Title: "ID", Width: 3, Align: Right},       // Fixed width for streaming
+		{Title: "Name", Width: 8, Align: Left},      // Fixed width for streaming
+		{Title: "Status", Width: 10, Align: Center}, // Fixed width for streaming
 	}
 
 	table := NewTable(&buf, columns)
@@ -340,9 +340,9 @@ func testStreamingMode() string {
 func testJapaneseCharacters() string {
 	var buf bytes.Buffer
 	columns := []Column{
-		{Title: "名前", Width: 0, Align: AlignLeft},
-		{Title: "年齢", Width: 0, Align: AlignCenter},
-		{Title: "職業", Width: 0, Align: AlignLeft},
+		{Title: "名前", Width: 0, Align: Left},
+		{Title: "年齢", Width: 0, Align: Center},
+		{Title: "職業", Width: 0, Align: Left},
 	}
 
 	table := NewTable(&buf, columns)
@@ -357,9 +357,9 @@ func testJapaneseCharacters() string {
 func testEscapeSequences() string {
 	var buf bytes.Buffer
 	columns := []Column{
-		{Title: "Type", Width: 0, Align: AlignLeft},
-		{Title: "Content", Width: 0, Align: AlignLeft},
-		{Title: "Width", Width: 0, Align: AlignRight},
+		{Title: "Type", Width: 0, Align: Left},
+		{Title: "Content", Width: 0, Align: Left},
+		{Title: "Width", Width: 0, Align: Right},
 	}
 
 	table := NewTable(&buf, columns)
@@ -375,9 +375,9 @@ func testEscapeSequences() string {
 func testCustomBorders() string {
 	var buf bytes.Buffer
 	columns := []Column{
-		{Title: "Column1", Width: 0, Align: AlignLeft},
-		{Title: "Column2", Width: 0, Align: AlignCenter},
-		{Title: "Column3", Width: 0, Align: AlignRight},
+		{Title: "Column1", Width: 0, Align: Left},
+		{Title: "Column2", Width: 0, Align: Center},
+		{Title: "Column3", Width: 0, Align: Right},
 	}
 
 	table := NewTable(&buf, columns)
@@ -407,9 +407,9 @@ func testCustomBorders() string {
 func testNoAlignMode() string {
 	var buf bytes.Buffer
 	columns := []Column{
-		{Title: "Raw1", Width: 0, Align: AlignLeft},
-		{Title: "Raw2", Width: 0, Align: AlignCenter},
-		{Title: "Raw3", Width: 0, Align: AlignRight},
+		{Title: "Raw1", Width: 0, Align: Left},
+		{Title: "Raw2", Width: 0, Align: Center},
+		{Title: "Raw3", Width: 0, Align: Right},
 	}
 
 	table := NewTable(&buf, columns)

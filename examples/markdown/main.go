@@ -9,9 +9,9 @@ import (
 func main() {
 	// Define columns with fixed width for streaming Markdown
 	columns := []termhyo.Column{
-		{Title: "Time", Width: 0, Align: termhyo.AlignLeft},
-		{Title: "Event", Width: 0, Align: termhyo.AlignLeft},
-		{Title: "Status", Width: 0, Align: termhyo.AlignCenter},
+		{Title: "Time", Width: 0, Align: termhyo.Left},
+		{Title: "Event", Width: 0, Align: termhyo.Left},
+		{Title: "Status", Width: 0, Align: termhyo.Center},
 	}
 
 	// Create table with Markdown style

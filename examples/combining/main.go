@@ -9,9 +9,9 @@ import (
 func main() {
 	// Define columns
 	columns := []termhyo.Column{
-		{Title: "Text Type", Width: 0, Align: termhyo.AlignLeft},
-		{Title: "Example", Width: 0, Align: termhyo.AlignLeft},
-		{Title: "Description", Width: 0, Align: termhyo.AlignLeft},
+		{Title: "Text Type", Width: 0, Align: termhyo.Left},
+		{Title: "Example", Width: 0, Align: termhyo.Left},
+		{Title: "Description", Width: 0, Align: termhyo.Left},
 	}
 
 	// Create table with default style
