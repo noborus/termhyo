@@ -16,7 +16,7 @@ type Table struct {
 	mode         RenderMode
 	renderer     Renderer
 	borderStyle  BorderStyle
-	borderConfig BorderConfig
+	borderConfig TableBorderConfig
 	align        bool // If false, skip alignment for all columns
 	borders      map[string]string
 	padding      int
@@ -24,7 +24,7 @@ type Table struct {
 }
 
 // GetBorderConfig returns the current border configuration.
-func (t *Table) GetBorderConfig() BorderConfig {
+func (t *Table) GetBorderConfig() TableBorderConfig {
 	return t.borderConfig
 }
 
@@ -120,14 +120,14 @@ func Align(align bool) TableOption {
 	}
 }
 
-// BorderConfigOpt sets a custom border configuration (option).
+// BorderConfig sets a custom border configuration (option).
 //
 // Example:
 //
 //	cfg := termhyo.GetBorderConfig(termhyo.BoxDrawingStyle)
 //	cfg.Left = false
-//	table := termhyo.NewTable(os.Stdout, columns, termhyo.BorderConfigOpt(cfg))
-func BorderConfigOpt(cfg BorderConfig) TableOption {
+//	table := termhyo.NewTable(os.Stdout, columns, termhyo.BorderConfig(cfg))
+func BorderConfig(cfg TableBorderConfig) TableOption {
 	return func(t *Table) {
 		t.borderConfig = cfg
 		t.borders = cfg.Chars
@@ -494,7 +494,7 @@ func (t *Table) GetBorderStyle() BorderStyle {
 }
 
 // SetBorderConfig allows setting a custom border configuration.
-func (t *Table) SetBorderConfig(config BorderConfig) {
+func (t *Table) SetBorderConfig(config TableBorderConfig) {
 	t.borderConfig = config
 	t.borders = config.Chars
 }

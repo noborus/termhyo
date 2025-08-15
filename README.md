@@ -120,7 +120,7 @@ table.AddRowCells(
 
 ```go
 // Create custom border configuration
-customConfig := termhyo.BorderConfig{
+customConfig := termhyo.TableBorderConfig{
     Chars: map[string]string{
         "horizontal": "=",
         "vertical":   "|",
@@ -136,7 +136,7 @@ customConfig := termhyo.BorderConfig{
     Padding:  true,  // Enable content padding
 }
 
-table := termhyo.NewTable(os.Stdout, columns, termhyo.BorderConfigOpt(customConfig))
+table := termhyo.NewTable(os.Stdout, columns, termhyo.BorderConfig(customConfig))
 ```
 
 ## Running Examples

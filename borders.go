@@ -3,8 +3,8 @@ package termhyo
 // BorderStyle defines different border styles.
 type BorderStyle string
 
-// BorderConfig holds border style configuration.
-type BorderConfig struct {
+// TableBorderConfig holds border style configuration.
+type TableBorderConfig struct {
 	Chars    map[string]string
 	Top      bool // Show top border
 	Bottom   bool // Show bottom border
@@ -34,7 +34,7 @@ const (
 
 // Predefined border configurations.
 var (
-	boxDrawingConfig = BorderConfig{
+	boxDrawingConfig = TableBorderConfig{
 		Chars: map[string]string{
 			"horizontal":   "─",
 			"vertical":     "│",
@@ -57,7 +57,7 @@ var (
 		Padding:  true,
 	}
 
-	asciiConfig = BorderConfig{
+	asciiConfig = TableBorderConfig{
 		Chars: map[string]string{
 			"horizontal":   "-",
 			"vertical":     "|",
@@ -80,7 +80,7 @@ var (
 		Padding:  true,
 	}
 
-	roundedConfig = BorderConfig{
+	roundedConfig = TableBorderConfig{
 		Chars: map[string]string{
 			"horizontal":   "─",
 			"vertical":     "│",
@@ -103,7 +103,7 @@ var (
 		Padding:  true,
 	}
 
-	doubleConfig = BorderConfig{
+	doubleConfig = TableBorderConfig{
 		Chars: map[string]string{
 			"horizontal":   "═",
 			"vertical":     "║",
@@ -126,7 +126,7 @@ var (
 		Padding:  true,
 	}
 
-	minimalConfig = BorderConfig{
+	minimalConfig = TableBorderConfig{
 		Chars: map[string]string{
 			"horizontal":   " ",
 			"vertical":     " ",
@@ -149,7 +149,7 @@ var (
 		Padding:  true,
 	}
 
-	markdownConfig = BorderConfig{
+	markdownConfig = TableBorderConfig{
 		Chars: map[string]string{
 			"horizontal":   "-",
 			"vertical":     "|",
@@ -172,7 +172,7 @@ var (
 		Padding:  true, // Use common padding functionality
 	}
 
-	tsvConfig = BorderConfig{
+	tsvConfig = TableBorderConfig{
 		Chars: map[string]string{
 			"horizontal":   "",
 			"vertical":     "\t",
@@ -197,7 +197,7 @@ var (
 )
 
 // GetBorderConfig returns border configuration for the specified style.
-func GetBorderConfig(style BorderStyle) BorderConfig {
+func GetBorderConfig(style BorderStyle) TableBorderConfig {
 	switch style {
 	case ASCIIStyle:
 		return asciiConfig

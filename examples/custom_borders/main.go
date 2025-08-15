@@ -45,16 +45,8 @@ func main() {
 
 	// Example of custom border configuration - only internal separators
 	fmt.Printf("=== Custom: Internal separators only ===\n")
-	customColumns := []termhyo.Column{
-		{Title: "Column1", Width: 0, Align: termhyo.Left},
-		{Title: "Column2", Width: 0, Align: termhyo.Center},
-		{Title: "Column3", Width: 0, Align: termhyo.Right},
-	}
-
-	customTable := termhyo.NewTable(os.Stdout, customColumns)
-
 	// Create custom border config - only internal vertical separators
-	customConfig := termhyo.BorderConfig{
+	customConfig := termhyo.TableBorderConfig{
 		Chars: map[string]string{
 			"vertical": " | ",
 		},
@@ -66,7 +58,14 @@ func main() {
 		Vertical: true,
 	}
 
-	customTable.SetBorderConfig(customConfig)
+	customColumns := []termhyo.Column{
+		{Title: "Column1", Width: 0, Align: termhyo.Left},
+		{Title: "Column2", Width: 0, Align: termhyo.Center},
+		{Title: "Column3", Width: 0, Align: termhyo.Right},
+	}
+
+	customTable := termhyo.NewTable(os.Stdout, customColumns, termhyo.BorderConfig(customConfig))
+
 	customTable.AddRow("Left", "Center", "Right")
 	customTable.AddRow("Data1", "Data2", "Data3")
 	customTable.Render()

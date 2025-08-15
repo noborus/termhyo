@@ -383,7 +383,7 @@ func testCustomBorders() string {
 	table := NewTable(&buf, columns)
 
 	// Custom border config - only internal vertical separators
-	customConfig := BorderConfig{
+	customConfig := TableBorderConfig{
 		Chars: map[string]string{
 			"vertical": " | ",
 		},
