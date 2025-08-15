@@ -10,7 +10,7 @@
 ## Features
 
 - **Two rendering modes**: Flexible display with BufferedMode and StreamingMode
-- **Multiple border styles**: Choose from Box Drawing, ASCII, Rounded, Double, and Minimal
+- **Multiple border styles**: Choose from Box Drawing, ASCII, Rounded, Double, Minimal, and VerticalBar (only vertical | separators)
 - **Automatic width calculation**: Automatic column width adjustment and alignment
 - **Unicode support**: Proper handling of multibyte characters, combining characters, emojis, and East Asian text
 - **Interface design**: Extensible renderer architecture
@@ -26,37 +26,6 @@ go get github.com/noborus/termhyo
 ### Requirements
 
 - Go 1.23 or later
-
-## File Structure
-
-```tree
-termhyo/
-├── termhyo.go         # Package documentation and main entry point
-├── table.go           # Table struct and main logic
-├── column.go          # Column, Cell, Row definitions
-├── borders.go         # Border style definitions
-├── renderer.go        # Renderer interface and implementation
-├── markdown.go        # Markdown table renderer
-├── header_styles.go   # Header styling with ANSI escape sequences
-├── width.go           # String width calculation utilities
-└── examples/          # Runnable example programs
-    ├── basic/         # Basic table example
-    │   └── main.go
-    ├── header_styles/ # Header styling demonstration
-    │   └── main.go
-    ├── streaming/     # Streaming mode example
-    │   └── main.go
-    ├── japanese/      # Japanese text example
-    │   └── main.go
-    ├── unicode/       # Unicode and emoji example
-    │   └── main.go
-    ├── combining/     # Combining characters example
-    │   └── main.go
-    ├── markdown/      # Markdown table format example
-    │   └── main.go
-    └── custom_borders/ # Custom border configuration example
-        └── main.go
-```
 
 ## Basic Usage
 
@@ -141,34 +110,8 @@ table := termhyo.NewTable(os.Stdout, columns, termhyo.BorderConfig(customConfig)
 
 ## Running Examples
 
-You can run the example programs to see termhyo in action:
-
-```bash
-# Basic table example
-cd examples
-go run basic.go
-
-# Different border styles
-go run styles.go
-
-# Streaming mode demonstration
-go run streaming.go
-
-# Japanese text handling
-go run japanese.go
-
-# Unicode and emoji support
-go run unicode.go
-
-# Combining characters and complex Unicode
-go run combining.go
-
-# Markdown table format
-go run markdown.go
-
-# Custom border configurations
-go run custom_borders.go
-```
+You can run various example programs to see termhyo in action.
+See the [examples](./examples) directory for more.
 
 ## Rendering Modes
 
@@ -191,6 +134,7 @@ go run custom_borders.go
 - `RoundedStyle`: Rounded corner style
 - `DoubleStyle`: Double line style
 - `MinimalStyle`: Minimal border
+- `VerticalBarStyle`: Only vertical bar separators (|), no outer borders
 - `MarkdownStyle`: Markdown table format
 - `TSVStyle`: Tab-separated values format
 
