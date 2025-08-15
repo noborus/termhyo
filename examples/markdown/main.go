@@ -15,7 +15,7 @@ func main() {
 	}
 
 	// Create table with Markdown style
-	table := termhyo.NewTableWithStyle(os.Stdout, columns, termhyo.WithBorderStyle(termhyo.MarkdownStyle))
+	table := termhyo.NewTable(os.Stdout, columns, termhyo.Border(termhyo.MarkdownStyle))
 	// table.SetAlign(false) // Disable alignment for streaming mode
 	// Simulate real-time data streaming in Markdown format
 	events := [][]string{

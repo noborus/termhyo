@@ -36,7 +36,7 @@ func main() {
 	for i, style := range styles {
 		fmt.Printf("\n=== %s ===\n", data[i][0])
 
-		table := termhyo.NewTableWithStyle(os.Stdout, columns, termhyo.WithBorderStyle(style))
+		table := termhyo.NewTable(os.Stdout, columns, termhyo.Border(style))
 		for _, row := range data {
 			table.AddRow(row...)
 		}

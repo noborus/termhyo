@@ -196,8 +196,8 @@ var (
 	}
 )
 
-// getBorderConfig returns border configuration for the specified style.
-func getBorderConfig(style BorderStyle) BorderConfig {
+// GetBorderConfig returns border configuration for the specified style.
+func GetBorderConfig(style BorderStyle) BorderConfig {
 	switch style {
 	case ASCIIStyle:
 		return asciiConfig

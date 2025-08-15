@@ -5,43 +5,8 @@ import (
 	"strings"
 )
 
-// TableStyle represents the complete styling configuration for a table.
-type TableStyle struct {
-	BorderStyle BorderStyle // Border style configuration
-	HeaderStyle HeaderStyle // Header styling configuration
-}
-
-// DefaultTableStyle returns the default table style.
-func DefaultTableStyle() TableStyle {
-	return TableStyle{
-		BorderStyle: BoxDrawingStyle,
-		HeaderStyle: HeaderStyle{},
-	}
-}
-
-// WithBorderStyle creates a TableStyle with the specified border style.
-func WithBorderStyle(borderStyle BorderStyle) TableStyle {
-	return TableStyle{
-		BorderStyle: borderStyle,
-		HeaderStyle: HeaderStyle{},
-	}
-}
-
-// WithHeaderStyle creates a TableStyle with the specified header style.
-func WithHeaderStyle(headerStyle HeaderStyle) TableStyle {
-	return TableStyle{
-		BorderStyle: BoxDrawingStyle,
-		HeaderStyle: headerStyle,
-	}
-}
-
-// WithStyles creates a TableStyle with both border and header styles.
-func WithStyles(borderStyle BorderStyle, headerStyle HeaderStyle) TableStyle {
-	return TableStyle{
-		BorderStyle: borderStyle,
-		HeaderStyle: headerStyle,
-	}
-}
+// TableOption is a functional option for configuring Table.
+type TableOption func(*Table)
 
 // Table represents the main table structure.
 type Table struct {
@@ -84,14 +49,21 @@ func (t *Table) GetAlign() bool {
 	return t.align
 }
 
-// NewTable creates a new table with default styling.
-func NewTable(writer io.Writer, columns []Column) *Table {
-	return NewTableWithStyle(writer, columns, DefaultTableStyle())
-}
-
-// NewTableWithStyle creates a new table with specified styling.
-func NewTableWithStyle(writer io.Writer, columns []Column, style TableStyle) *Table {
-	borderConfig := getBorderConfig(style.BorderStyle)
+// NewTable creates a new table with the given columns and optional configuration.
+//
+// This function uses the Functional Option Pattern:
+//
+//	table := termhyo.NewTable(os.Stdout, columns, termhyo.Border(termhyo.BoxDrawingStyle), termhyo.Header(headerStyle), ...)
+//
+// You can specify border style, header style, alignment, etc. by passing option functions.
+//
+// Example:
+//
+//	table := termhyo.NewTable(os.Stdout, columns, termhyo.Border(termhyo.DoubleStyle), termhyo.Align(false))
+//
+// This is the recommended way to create and configure tables in termhyo.
+func NewTable(writer io.Writer, columns []Column, opts ...TableOption) *Table {
+	borderConfig := GetBorderConfig(BoxDrawingStyle)
 
 	t := &Table{
 		columns:      columns,
@@ -99,10 +71,15 @@ func NewTableWithStyle(writer io.Writer, columns []Column, style TableStyle) *Ta
 		rows:         make([]Row, 0),
 		padding:      1,
 		align:        true, // Default to aligned columns
-		borderStyle:  style.BorderStyle,
+		borderStyle:  BoxDrawingStyle,
 		borderConfig: borderConfig,
 		borders:      borderConfig.Chars,
-		headerStyle:  style.HeaderStyle,
+		headerStyle:  HeaderStyle{},
+	}
+
+	// Apply options
+	for _, opt := range opts {
+		opt(t)
 	}
 
 	// Determine render mode based on column configuration
@@ -118,6 +95,43 @@ func NewTableWithStyle(writer io.Writer, columns []Column, style TableStyle) *Ta
 	}
 
 	return t
+}
+
+// Border sets the border style (option).
+func Border(style BorderStyle) TableOption {
+	return func(t *Table) {
+		t.borderStyle = style
+		t.borderConfig = GetBorderConfig(style)
+		t.borders = t.borderConfig.Chars
+	}
+}
+
+// Header sets the header style (option).
+func Header(style HeaderStyle) TableOption {
+	return func(t *Table) {
+		t.headerStyle = style
+	}
+}
+
+// Align sets the align flag (option).
+func Align(align bool) TableOption {
+	return func(t *Table) {
+		t.align = align
+	}
+}
+
+// BorderConfigOpt sets a custom border configuration (option).
+//
+// Example:
+//
+//	cfg := termhyo.GetBorderConfig(termhyo.BoxDrawingStyle)
+//	cfg.Left = false
+//	table := termhyo.NewTable(os.Stdout, columns, termhyo.BorderConfigOpt(cfg))
+func BorderConfigOpt(cfg BorderConfig) TableOption {
+	return func(t *Table) {
+		t.borderConfig = cfg
+		t.borders = cfg.Chars
+	}
 }
 
 // determineRenderMode decides whether to use buffered or streaming mode.
@@ -403,13 +417,16 @@ func (t *Table) formatCell(content string, width int, align Alignment) string {
 func (t *Table) RenderBorderLine(position string) error {
 	var builder strings.Builder
 
-	switch position {
-	case "top":
-		builder.WriteString(t.borders["top_left"])
-	case "bottom":
-		builder.WriteString(t.borders["bottom_left"])
-	default: // middle
-		builder.WriteString(t.borders["left_cross"])
+	// left border (only if enabled)
+	if t.borderConfig.Left {
+		switch position {
+		case "top":
+			builder.WriteString(t.borders["top_left"])
+		case "bottom":
+			builder.WriteString(t.borders["bottom_left"])
+		default:
+			builder.WriteString(t.borders["left_cross"])
+		}
 	}
 
 	for i, col := range t.columns {
@@ -420,7 +437,8 @@ func (t *Table) RenderBorderLine(position string) error {
 		}
 		builder.WriteString(strings.Repeat(t.borders["horizontal"], cellWidth))
 
-		if i < len(t.columns)-1 {
+		// Draw vertical separator between columns only if enabled
+		if t.borderConfig.Vertical && i < len(t.columns)-1 {
 			switch position {
 			case "top":
 				builder.WriteString(t.borders["top_cross"])
@@ -432,13 +450,16 @@ func (t *Table) RenderBorderLine(position string) error {
 		}
 	}
 
-	switch position {
-	case "top":
-		builder.WriteString(t.borders["top_right"])
-	case "bottom":
-		builder.WriteString(t.borders["bottom_right"])
-	default:
-		builder.WriteString(t.borders["right_cross"])
+	// right border (only if enabled)
+	if t.borderConfig.Right {
+		switch position {
+		case "top":
+			builder.WriteString(t.borders["top_right"])
+		case "bottom":
+			builder.WriteString(t.borders["bottom_right"])
+		default:
+			builder.WriteString(t.borders["right_cross"])
+		}
 	}
 
 	builder.WriteString("\n")
@@ -463,7 +484,7 @@ func (t *Table) SetRenderer(renderer Renderer) {
 // SetBorderStyle changes the border style of the table.
 func (t *Table) SetBorderStyle(style BorderStyle) {
 	t.borderStyle = style
-	t.borderConfig = getBorderConfig(style)
+	t.borderConfig = GetBorderConfig(style)
 	t.borders = t.borderConfig.Chars
 }
 

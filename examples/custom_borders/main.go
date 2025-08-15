@@ -31,7 +31,7 @@ func main() {
 
 	for _, config := range testConfigs {
 		fmt.Printf("=== %s Style ===\n", config.name)
-		table := termhyo.NewTableWithStyle(os.Stdout, columns, termhyo.WithBorderStyle(config.style))
+		table := termhyo.NewTable(os.Stdout, columns, termhyo.Border(config.style))
 
 		// Add header
 		table.AddRow("Test", config.desc, config.border)

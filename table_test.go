@@ -262,21 +262,21 @@ func testDifferentBorderStyles() string {
 
 	// Box Drawing Style
 	buf.WriteString("=== Box Drawing Style ===\n")
-	table1 := NewTableWithStyle(&buf, columns, WithBorderStyle(BoxDrawingStyle))
+	table1 := NewTable(&buf, columns, Border(BoxDrawingStyle))
 	table1.AddRow("Box", "Unicode box drawing")
 	table1.Render()
 	buf.WriteString("\n")
 
 	// ASCII Style
 	buf.WriteString("=== ASCII Style ===\n")
-	table2 := NewTableWithStyle(&buf, columns, WithBorderStyle(ASCIIStyle))
+	table2 := NewTable(&buf, columns, Border(ASCIIStyle))
 	table2.AddRow("ASCII", "ASCII characters")
 	table2.Render()
 	buf.WriteString("\n")
 
 	// Rounded Style
 	buf.WriteString("=== Rounded Style ===\n")
-	table3 := NewTableWithStyle(&buf, columns, WithBorderStyle(RoundedStyle))
+	table3 := NewTable(&buf, columns, Border(RoundedStyle))
 	table3.AddRow("Rounded", "Rounded corners")
 	table3.Render()
 
@@ -291,7 +291,7 @@ func testMarkdownTable() string {
 		{Title: "Priority", Width: 0, Align: Right},
 	}
 
-	table := NewTableWithStyle(&buf, columns, WithBorderStyle(MarkdownStyle))
+	table := NewTable(&buf, columns, Border(MarkdownStyle))
 	table.AddRow("Header styles", "Done", "High")
 	table.AddRow("Border controls", "Done", "High")
 	table.AddRow("Documentation", "In Progress", "Medium")
@@ -313,7 +313,7 @@ func testMarkdownWithHeaderStyle() string {
 		ForegroundColor: AnsiWhite,
 		BackgroundColor: AnsiBgBlue,
 	}
-	table := NewTableWithStyle(&buf, columns, WithStyles(MarkdownStyle, headerStyle))
+	table := NewTable(&buf, columns, Border(MarkdownStyle), Header(headerStyle))
 	table.AddRow("Header styles", "Done", "High")
 	table.AddRow("Border controls", "Done", "High")
 	table.Render()
