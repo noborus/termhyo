@@ -9,10 +9,10 @@ import (
 func main() {
 	// Define columns
 	columns := []termhyo.Column{
-		{Title: "ID", Width: 0, Align: termhyo.Right},
-		{Title: "Name", Width: 0, Align: termhyo.Left},
-		{Title: "Score", Width: 0, Align: termhyo.Center},
-		{Title: "Grade", Width: 0, Align: termhyo.Center},
+		{Title: "ID", Align: termhyo.Right},
+		{Title: "Name", Align: termhyo.Left},
+		{Title: "Score", Align: termhyo.Center},
+		{Title: "Grade", Align: termhyo.Center},
 	}
 
 	// Create table with default style

@@ -41,9 +41,9 @@ import (
 
 func main() {
     columns := []termhyo.Column{
-        {Title: "ID", Width: 0, Align: termhyo.Right},
-        {Title: "Name", Width: 0, Align: termhyo.Left},
-        {Title: "Score", Width: 0, Align: termhyo.Center},
+        {Title: "ID", Align: termhyo.Right},
+        {Title: "Name", Align: termhyo.Left},
+        {Title: "Score", Align: termhyo.Center},
     }
 
     table := termhyo.NewTable(os.Stdout, columns)

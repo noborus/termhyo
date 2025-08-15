@@ -5,34 +5,32 @@ The name combines "terminal" and the Japanese word "表 (hyo)" meaning "table".
 
 # Features
 
-termhyo offers comprehensive table rendering capabilities:
-
-- Multiple rendering modes (Buffered and Streaming)
-- Rich border styling options (Box Drawing, ASCII, Rounded, Markdown)
-- Comprehensive header styling with ANSI escape sequences
-- Unicode and multi-byte character support
-- Automatic column width calculation
-- Progressive border control
+- Multiple rendering modes: Buffered and Streaming
+- Rich border styling: BoxDrawing, ASCII, Rounded, Double, Minimal, VerticalBar (only |), Markdown, TSV, and custom borders
+- Functional Option Pattern for table configuration (Border, Header, AutoAlign, BorderConfig, etc.)
+- Comprehensive header styling with ANSI escape sequences and true color
+- Unicode and multi-byte character support (East Asian, combining, emoji, etc.)
+- Automatic column width calculation and type-safe alignment
+- Fine-grained border control (show/hide top, bottom, left, right, vertical, middle)
 - Extensible renderer interface
 
 # Basic Usage
 
-Creating a simple table:
-
 	columns := []termhyo.Column{
-			   {Title: "ID", Width: 0, Align: termhyo.Right},
-			   {Title: "Name", Width: 0, Align: termhyo.Left},
-			   {Title: "Age", Width: 0, Align: termhyo.Center},
+		{Title: "ID", Align: termhyo.Right},
+		{Title: "Name", Align: termhyo.Left},
+		{Title: "Score", Align: termhyo.Center},
 	}
-
 	table := termhyo.NewTable(os.Stdout, columns)
-	table.AddRow("1", "Alice", "25")
-	table.AddRow("2", "Bob", "30")
+	table.AddRow("1", "Alice", "85")
+	table.AddRow("2", "Bob", "92")
 	table.Render()
 
-# Header Styling
+# Border Style Example
 
-Adding visual styling to headers:
+	table := termhyo.NewTable(os.Stdout, columns, termhyo.Border(termhyo.VerticalBarStyle), termhyo.AutoAlign(false))
+
+# Header Styling Example
 
 	headerStyle := termhyo.HeaderStyle{
 		Bold:            true,
@@ -41,57 +39,36 @@ Adding visual styling to headers:
 	}
 	table.SetHeaderStyle(headerStyle)
 
-# Border Control
+# Custom Border Example
 
-Controlling table borders for different visual styles:
-
-	// Remove header separator for clean look
-	table.SetHeaderStyleWithoutSeparator(headerStyle)
-
-	// Remove all horizontal borders
-	table.SetHeaderStyleWithoutBorders(headerStyle)
-
-	// Minimal table with only header styling
-	table.SetHeaderStyleMinimal(headerStyle)
+	customConfig := termhyo.TableBorderConfig{
+		Chars: map[string]string{"vertical": "|"},
+		Top: false, Bottom: false, Left: false, Right: false, Vertical: true,
+	}
+	table := termhyo.NewTable(os.Stdout, columns, termhyo.BorderConfig(customConfig))
 
 # Rendering Modes
 
-termhyo automatically selects the appropriate rendering mode:
+- BufferedMode: Used when columns have auto-width (Width: 0) or alignment is enabled. Calculates optimal widths.
+- StreamingMode: Used when all columns have fixed widths and alignment is disabled. Memory efficient.
 
-- Buffered Mode: Used when columns have auto-width (Width: 0). Calculates optimal widths.
-- Streaming Mode: Used when all columns have fixed widths. More memory efficient.
+# Character & Color Support
 
-# Character Support
+- Handles ASCII, Unicode, multi-byte, combining, emoji, and ANSI escape sequences
+- Correct display width calculation for all character types
+- Full ANSI color, 256-color, and 24-bit true color for headers
+- Text formatting: Bold, Italic, Underline, Reverse, etc.
 
-Proper handling of various character types:
+# See Also
 
-- ASCII characters
-- Unicode characters
-- Multi-byte characters (Japanese, Chinese, Korean)
-- Combining characters
-- Emoji and other special characters
-- ANSI escape sequences
-
-The library correctly calculates display width for all these character types.
-
-# Color Support
-
-Full ANSI color support for headers:
-
-- 8-bit colors (AnsiRed, AnsiBlue, etc.)
-- 256-color palette (RGB256)
-- 24-bit true color (TrueColorFg, TrueColorBg)
-- Text formatting (Bold, Italic, Underline, etc.)
-
-# Examples
-
-See the examples/ directory for comprehensive usage examples including:
+See the examples/ directory for comprehensive usage:
 
 - Basic table creation
 - Header styling variations
-- Border style demonstrations
-- Unicode character handling
-- Markdown table output
+- Border style demonstrations (including VerticalBarStyle)
+- Unicode and multilingual support
+- Markdown/TSV output
 - Streaming mode usage
+- Custom border configuration
 */
 package termhyo
