@@ -103,7 +103,7 @@ func truncateWithEscapes(s string, maxWidth int) string {
 			escapeStart := i
 			i += 2 // Skip \x1b[
 
-			for i < len(runes) && !((runes[i] >= 'a' && runes[i] <= 'z') || (runes[i] >= 'A' && runes[i] <= 'Z')) {
+			for i < len(runes) && !isAlpha(runes[i]) {
 				i++
 			}
 			if i < len(runes) {
@@ -149,6 +149,11 @@ func truncateWithEscapes(s string, maxWidth int) string {
 	}
 
 	return result.String()
+}
+
+// isAlpha returns true if the rune is an ASCII alphabetic character.
+func isAlpha(r rune) bool {
+	return (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z')
 }
 
 // padString pads a string to the specified display width with spaces.

@@ -13,7 +13,7 @@ type MarkdownRenderer struct {
 
 // hasAutoWidth checks if any columns have auto width.
 func hasAutoWidth(table *Table) bool {
-	if !table.align {
+	if !table.autoAlign {
 		return false // No auto width in streaming mode
 	}
 	for _, col := range table.columns {
@@ -93,7 +93,7 @@ func (r *MarkdownRenderer) renderMarkdownHeader(table *Table) error {
 	for _, col := range table.columns {
 		// Apply alignment to header content (headers are typically centered)
 		content := col.Title
-		if table.align {
+		if table.autoAlign {
 			content = table.formatCell(col.Title, col.Width, Center)
 		}
 		line += content + "|"
@@ -137,7 +137,7 @@ func (r *MarkdownRenderer) renderMarkdownRow(table *Table, row Row) error {
 	}
 
 	for i, col := range table.columns {
-		if !table.align {
+		if !table.autoAlign {
 			line += cells[i].Content + "|"
 			continue // Skip alignment if noAlign is set
 		}

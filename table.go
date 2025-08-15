@@ -17,7 +17,7 @@ type Table struct {
 	renderer     Renderer
 	borderStyle  BorderStyle
 	borderConfig TableBorderConfig
-	align        bool // If false, skip alignment for all columns
+	autoAlign    bool // If false, skip alignment for all columns
 	borders      map[string]string
 	padding      int
 	headerStyle  HeaderStyle // styling for header row
@@ -28,9 +28,9 @@ func (t *Table) GetBorderConfig() TableBorderConfig {
 	return t.borderConfig
 }
 
-// SetAlign sets whether to skip alignment for all columns.
-func (t *Table) SetAlign(align bool) {
-	t.align = align
+// SetAutoAlign sets whether to skip alignment for all columns.
+func (t *Table) SetAutoAlign(autoAlign bool) {
+	t.autoAlign = autoAlign
 	// Recalculate render mode when alignment setting changes
 	t.mode = t.determineRenderMode()
 
@@ -46,7 +46,7 @@ func (t *Table) SetAlign(align bool) {
 
 // GetAlign returns the current align setting.
 func (t *Table) GetAlign() bool {
-	return t.align
+	return t.autoAlign
 }
 
 // NewTable creates a new table with the given columns and optional configuration.
@@ -70,7 +70,7 @@ func NewTable(writer io.Writer, columns []Column, opts ...TableOption) *Table {
 		writer:       writer,
 		rows:         make([]Row, 0),
 		padding:      1,
-		align:        true, // Default to aligned columns
+		autoAlign:    true, // Default to auto-aligning columns
 		borderStyle:  BoxDrawingStyle,
 		borderConfig: borderConfig,
 		borders:      borderConfig.Chars,
@@ -113,10 +113,10 @@ func Header(style HeaderStyle) TableOption {
 	}
 }
 
-// Align sets the align flag (option).
-func Align(align bool) TableOption {
+// AutoAlign sets the align flag (option).
+func AutoAlign(autoAlign bool) TableOption {
 	return func(t *Table) {
-		t.align = align
+		t.autoAlign = autoAlign
 	}
 }
 
@@ -146,7 +146,7 @@ func (t *Table) determineRenderMode() RenderMode {
 	}
 
 	// Use streaming mode if no auto-width calculation needed OR no alignment needed
-	if !hasAutoWidth || !t.align {
+	if !hasAutoWidth || !t.autoAlign {
 		return StreamingMode
 	}
 
@@ -280,7 +280,7 @@ func (t *Table) RenderHeaderRow(row Row) error {
 			content = cell.Content
 
 			// Apply alignment if not disabled
-			if t.align {
+			if t.autoAlign {
 				align := col.Align
 				if cell.Align != Default {
 					align = cell.Align
@@ -288,7 +288,7 @@ func (t *Table) RenderHeaderRow(row Row) error {
 				content = t.formatCell(content, col.Width, align)
 			}
 		} else {
-			if t.align {
+			if t.autoAlign {
 				if !t.borderConfig.Padding {
 					// No padding for empty cells
 					content = strings.Repeat(" ", col.Width)
@@ -341,7 +341,7 @@ func (t *Table) RenderRow(row Row) error {
 			content = cell.Content
 
 			// Apply alignment if not disabled
-			if t.align {
+			if t.autoAlign {
 				align := col.Align
 				if cell.Align != Default {
 					align = cell.Align
@@ -349,7 +349,7 @@ func (t *Table) RenderRow(row Row) error {
 				content = t.formatCell(content, col.Width, align)
 			}
 		} else {
-			if t.align {
+			if t.autoAlign {
 				if !t.borderConfig.Padding {
 					// No padding for empty cells
 					content = strings.Repeat(" ", col.Width)

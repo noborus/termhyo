@@ -192,7 +192,7 @@ func TestRenderModes(t *testing.T) {
 		}
 
 		table := NewTable(&buf, columns)
-		table.SetAlign(false) // This should trigger streaming mode
+		table.SetAutoAlign(false) // This should trigger streaming mode
 		table.AddRow("Data")
 		table.Render()
 

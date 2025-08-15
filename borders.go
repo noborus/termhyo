@@ -26,6 +26,8 @@ const (
 	DoubleStyle BorderStyle = "double"
 	// MinimalStyle uses minimal borders.
 	MinimalStyle BorderStyle = "minimal"
+	// VerticalBarStyle uses only vertical bar separators (|), no outer borders.
+	VerticalBarStyle BorderStyle = "vertical_bar"
 	// MarkdownStyle uses Markdown table format.
 	MarkdownStyle BorderStyle = "markdown"
 	// TSVStyle uses tab separators only.
@@ -126,6 +128,29 @@ var (
 		Padding:  true,
 	}
 
+	verticalBarConfig = TableBorderConfig{
+		Chars: map[string]string{
+			"horizontal":   "",
+			"vertical":     "|",
+			"cross":        "|",
+			"top_left":     "",
+			"top_right":    "",
+			"bottom_left":  "",
+			"bottom_right": "",
+			"top_cross":    "",
+			"bottom_cross": "",
+			"left_cross":   "",
+			"right_cross":  "",
+		},
+		Top:      false,
+		Bottom:   false,
+		Middle:   false,
+		Left:     false,
+		Right:    false,
+		Vertical: true,
+		Padding:  true,
+	}
+
 	minimalConfig = TableBorderConfig{
 		Chars: map[string]string{
 			"horizontal":   " ",
@@ -207,6 +232,8 @@ func GetBorderConfig(style BorderStyle) TableBorderConfig {
 		return doubleConfig
 	case MinimalStyle:
 		return minimalConfig
+	case VerticalBarStyle:
+		return verticalBarConfig
 	case MarkdownStyle:
 		return markdownConfig
 	case TSVStyle:

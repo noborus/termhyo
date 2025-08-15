@@ -413,7 +413,7 @@ func testNoAlignMode() string {
 	}
 
 	table := NewTable(&buf, columns)
-	table.SetAlign(false) // Disable alignment
+	table.SetAutoAlign(false) // Disable alignment
 	table.AddRow("A", "B", "C")
 	table.AddRow("LongText", "X", "Y")
 	table.Render()
