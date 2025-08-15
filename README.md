@@ -87,7 +87,7 @@ func main() {
 ### Changing Border Style
 
 ```go
-table := termhyo.NewTableWithStyle(os.Stdout, columns, termhyo.ASCIIStyle)
+table := termhyo.NewTable(os.Stdout, columns, termhyo.Border(termhyo.ASCIIStyle))
 ```
 
 ### Text Alignment
@@ -136,7 +136,7 @@ customConfig := termhyo.BorderConfig{
     Padding:  true,  // Enable content padding
 }
 
-table.SetBorderConfig(customConfig)
+table := termhyo.NewTable(os.Stdout, columns, termhyo.BorderConfigOpt(customConfig))
 ```
 
 ## Running Examples
