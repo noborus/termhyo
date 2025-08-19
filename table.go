@@ -234,6 +234,7 @@ func (t *Table) RenderHeader() error {
 	headerRow := Row{
 		Cells: make([]Cell, len(t.columns)),
 	}
+
 	for i, col := range t.columns {
 		headerRow.Cells[i] = Cell{
 			Content: col.Title,
@@ -268,53 +269,27 @@ func (t *Table) RenderHeaderRow(row Row) error {
 	// Start the line with style prefix
 	builder.WriteString(stylePrefix)
 
+	// Cache vertical border string
+	vertical := t.borders["vertical"]
+
 	// Left border (only if enabled)
 	if t.borderConfig.Left {
-		builder.WriteString(t.borders["vertical"])
+		builder.WriteString(vertical)
 	}
 
 	for i, col := range t.columns {
-		var content string
-		if i < len(row.Cells) {
-			cell := row.Cells[i]
-			content = cell.Content
-
-			// Apply alignment if not disabled
-			if t.autoAlign {
-				align := col.Align
-				if cell.Align != Default {
-					align = cell.Align
-				}
-				content = t.formatCell(content, col.Width, align)
-			}
-		} else {
-			if t.autoAlign {
-				if !t.borderConfig.Padding {
-					// No padding for empty cells
-					content = strings.Repeat(" ", col.Width)
-				} else {
-					// Empty cell with padding using strings.Builder
-					var cellBuilder strings.Builder
-					paddingStr := strings.Repeat(" ", t.padding)
-					cellBuilder.WriteString(paddingStr)
-					cellBuilder.WriteString(strings.Repeat(" ", col.Width))
-					cellBuilder.WriteString(paddingStr)
-					content = cellBuilder.String()
-				}
-			}
-		}
-
+		content := t.getCellContent(row, i, col)
 		builder.WriteString(content)
 
 		// Add vertical separator between columns (only if enabled and not the last column)
 		if t.borderConfig.Vertical && i < len(t.columns)-1 {
-			builder.WriteString(t.borders["vertical"])
+			builder.WriteString(vertical)
 		}
 	}
 
 	// Right border (only if enabled)
 	if t.borderConfig.Right {
-		builder.WriteString(t.borders["vertical"])
+		builder.WriteString(vertical)
 	}
 
 	// End the line with style suffix
@@ -325,57 +300,62 @@ func (t *Table) RenderHeaderRow(row Row) error {
 	return err
 }
 
+// getCellContent returns the formatted content for a cell in a header row and column.
+func (t *Table) getCellContent(row Row, i int, col Column) string {
+	if i < len(row.Cells) {
+		cell := row.Cells[i]
+		if !t.autoAlign {
+			return cell.Content // No alignment, return raw content
+		}
+
+		align := col.Align
+		if cell.Align != Default {
+			align = cell.Align
+		}
+		return t.formatCell(cell.Content, col.Width, align)
+	}
+
+	if !t.autoAlign {
+		return ""
+	}
+	if !t.borderConfig.Padding {
+		// No padding for empty cells
+		return strings.Repeat(" ", col.Width)
+	}
+	// Empty cell with padding using strings.Builder
+	var builder strings.Builder
+	paddingStr := strings.Repeat(" ", t.padding)
+	builder.WriteString(paddingStr)
+	builder.WriteString(strings.Repeat(" ", col.Width))
+	builder.WriteString(paddingStr)
+	return builder.String()
+}
+
 // RenderRow renders a single row.
 func (t *Table) RenderRow(row Row) error {
 	var builder strings.Builder
 
+	// Cache vertical border string
+	vertical := t.borders["vertical"]
+
 	// Left border (only if enabled)
 	if t.borderConfig.Left {
-		builder.WriteString(t.borders["vertical"])
+		builder.WriteString(vertical)
 	}
 
 	for i, col := range t.columns {
-		var content string
-		if i < len(row.Cells) {
-			cell := row.Cells[i]
-			content = cell.Content
-
-			// Apply alignment if not disabled
-			if t.autoAlign {
-				align := col.Align
-				if cell.Align != Default {
-					align = cell.Align
-				}
-				content = t.formatCell(content, col.Width, align)
-			}
-		} else {
-			if t.autoAlign {
-				if !t.borderConfig.Padding {
-					// No padding for empty cells
-					content = strings.Repeat(" ", col.Width)
-				} else {
-					// Empty cell with padding using strings.Builder
-					var cellBuilder strings.Builder
-					paddingStr := strings.Repeat(" ", t.padding)
-					cellBuilder.WriteString(paddingStr)
-					cellBuilder.WriteString(strings.Repeat(" ", col.Width))
-					cellBuilder.WriteString(paddingStr)
-					content = cellBuilder.String()
-				}
-			}
-		}
-
+		content := t.getCellContent(row, i, col)
 		builder.WriteString(content)
 
 		// Add vertical separator between columns (only if enabled and not the last column)
 		if t.borderConfig.Vertical && i < len(t.columns)-1 {
-			builder.WriteString(t.borders["vertical"])
+			builder.WriteString(vertical)
 		}
 	}
 
 	// Right border (only if enabled)
 	if t.borderConfig.Right {
-		builder.WriteString(t.borders["vertical"])
+		builder.WriteString(vertical)
 	}
 
 	builder.WriteString("\n")
