@@ -37,32 +37,6 @@ type Table struct {
 	headerStyle  HeaderStyle // styling for header row
 }
 
-// GetBorderConfig returns the current border configuration.
-func (t *Table) GetBorderConfig() TableBorderConfig {
-	return t.borderConfig
-}
-
-// SetAutoAlign sets whether to skip alignment for all columns.
-func (t *Table) SetAutoAlign(autoAlign bool) {
-	t.autoAlign = autoAlign
-	// Recalculate render mode when alignment setting changes
-	t.mode = t.determineRenderMode()
-
-	// Update renderer based on new mode
-	if t.borderStyle == MarkdownStyle {
-		t.renderer = &MarkdownRenderer{}
-	} else if t.mode == StreamingMode {
-		t.renderer = &Streaming{}
-	} else {
-		t.renderer = &Buffered{}
-	}
-}
-
-// GetAlign returns the current align setting.
-func (t *Table) GetAlign() bool {
-	return t.autoAlign
-}
-
 // NewTable creates a new table with the given columns and optional configuration.
 //
 // This function uses the Functional Option Pattern:
@@ -109,43 +83,6 @@ func NewTable(writer io.Writer, columns []Column, opts ...TableOption) *Table {
 	}
 
 	return t
-}
-
-// Border sets the border style (option).
-func Border(style BorderStyle) TableOption {
-	return func(t *Table) {
-		t.borderStyle = style
-		t.borderConfig = GetBorderConfig(style)
-		t.borders = t.borderConfig.Chars
-	}
-}
-
-// Header sets the header style (option).
-func Header(style HeaderStyle) TableOption {
-	return func(t *Table) {
-		t.headerStyle = style
-	}
-}
-
-// AutoAlign sets the align flag (option).
-func AutoAlign(autoAlign bool) TableOption {
-	return func(t *Table) {
-		t.autoAlign = autoAlign
-	}
-}
-
-// BorderConfig sets a custom border configuration (option).
-//
-// Example:
-//
-//	cfg := termhyo.GetBorderConfig(termhyo.BoxDrawingStyle)
-//	cfg.Left = false
-//	table := termhyo.NewTable(os.Stdout, columns, termhyo.BorderConfig(cfg))
-func BorderConfig(cfg TableBorderConfig) TableOption {
-	return func(t *Table) {
-		t.borderConfig = cfg
-		t.borders = cfg.Chars
-	}
 }
 
 // determineRenderMode decides whether to use buffered or streaming mode.
@@ -235,7 +172,7 @@ func (t *Table) CalculateColumnWidths() {
 	}
 }
 
-// RenderHeader renders the table header.
+// RenderHeader renders the table header row, including the top border and header separator line if enabled.
 func (t *Table) RenderHeader() error {
 	if len(t.columns) == 0 {
 		return ErrNoColumns
@@ -392,7 +329,7 @@ func (t *Table) formatCell(content string, width int, align Alignment) string {
 		return padString(content, width, align)
 	}
 
-	// For non-padding-disabled mode, width is the content width
+	// When padding is enabled, the cell width is "content width + padding on both sides"
 	// Truncate if content is too long for the specified width
 	if contentWidth > width {
 		content = truncateString(content, width)
@@ -473,6 +410,69 @@ func (t *Table) RenderFooter() error {
 	return nil
 }
 
+// Border sets the border style (option).
+func Border(style BorderStyle) TableOption {
+	return func(t *Table) {
+		t.borderStyle = style
+		t.borderConfig = GetBorderConfig(style)
+		t.borders = t.borderConfig.Chars
+	}
+}
+
+// BorderConfig sets a custom border configuration (option).
+//
+// Example:
+//
+//	cfg := termhyo.GetBorderConfig(termhyo.BoxDrawingStyle)
+//	cfg.Left = false
+//	table := termhyo.NewTable(os.Stdout, columns, termhyo.BorderConfig(cfg))
+func BorderConfig(cfg TableBorderConfig) TableOption {
+	return func(t *Table) {
+		t.borderConfig = cfg
+		t.borders = cfg.Chars
+	}
+}
+
+// Header sets the header style (option).
+func Header(style HeaderStyle) TableOption {
+	return func(t *Table) {
+		t.headerStyle = style
+	}
+}
+
+// AutoAlign sets the align flag (option).
+func AutoAlign(autoAlign bool) TableOption {
+	return func(t *Table) {
+		t.autoAlign = autoAlign
+	}
+}
+
+// GetBorderConfig returns the current border configuration.
+func (t *Table) GetBorderConfig() TableBorderConfig {
+	return t.borderConfig
+}
+
+// SetAutoAlign sets whether to skip alignment for all columns.
+func (t *Table) SetAutoAlign(autoAlign bool) {
+	t.autoAlign = autoAlign
+	// Recalculate render mode when alignment setting changes
+	t.mode = t.determineRenderMode()
+
+	// Update renderer based on new mode
+	if t.borderStyle == MarkdownStyle {
+		t.renderer = &MarkdownRenderer{}
+	} else if t.mode == StreamingMode {
+		t.renderer = &Streaming{}
+	} else {
+		t.renderer = &Buffered{}
+	}
+}
+
+// GetAutoAlign returns the current auto-align setting.
+func (t *Table) GetAutoAlign() bool {
+	return t.autoAlign
+}
+
 // SetRenderer allows setting a custom renderer.
 func (t *Table) SetRenderer(renderer Renderer) {
 	t.renderer = renderer
@@ -499,6 +499,11 @@ func (t *Table) SetBorderConfig(config TableBorderConfig) {
 // SetHeaderStyle sets the styling for header row.
 func (t *Table) SetHeaderStyle(style HeaderStyle) {
 	t.headerStyle = style
+}
+
+// GetHeaderStyle returns the current header style.
+func (t *Table) GetHeaderStyle() HeaderStyle {
+	return t.headerStyle
 }
 
 // SetHeaderStyleWithoutSeparator sets the header style and disables the header separator line.
@@ -547,9 +552,4 @@ func (t *Table) SetHeaderStyleMinimal(style HeaderStyle) {
 	t.borderConfig.Right = false
 	t.borderConfig.Vertical = false // No column separators either
 	t.borders = t.borderConfig.Chars
-}
-
-// GetHeaderStyle returns the current header style.
-func (t *Table) GetHeaderStyle() HeaderStyle {
-	return t.headerStyle
 }
