@@ -1,7 +1,6 @@
 package termhyo
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -27,7 +26,7 @@ func hasAutoWidth(table *Table) bool {
 // AddRow adds a row for markdown rendering (buffered mode for width calculation).
 func (r *MarkdownRenderer) AddRow(_ *Table, row Row) error {
 	if r.rendered {
-		return fmt.Errorf("cannot add rows after table is rendered")
+		return ErrAddAfterRender
 	}
 
 	// Buffer the row for width calculation
@@ -40,7 +39,7 @@ func (r *MarkdownRenderer) AddRow(_ *Table, row Row) error {
 // Render renders any remaining content (for streaming, this is just cleanup).
 func (r *MarkdownRenderer) Render(table *Table) error {
 	if r.rendered {
-		return fmt.Errorf("table already rendered")
+		return ErrTableAlreadyRendered
 	}
 
 	// Calculate column widths if needed using all buffered rows

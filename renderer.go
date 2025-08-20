@@ -1,7 +1,5 @@
 package termhyo
 
-import "fmt"
-
 // Renderer defines the interface for different rendering strategies.
 type Renderer interface {
 	AddRow(table *Table, row Row) error
@@ -39,7 +37,7 @@ type Buffered struct {
 // AddRow adds a row to the buffered renderer.
 func (r *Buffered) AddRow(table *Table, row Row) error {
 	if r.rendered {
-		return fmt.Errorf("cannot add rows after table is rendered")
+		return ErrAddAfterRender
 	}
 	// Store row for later rendering
 	table.rows = append(table.rows, row)
@@ -49,7 +47,7 @@ func (r *Buffered) AddRow(table *Table, row Row) error {
 // Render renders the buffered content all at once.
 func (r *Buffered) Render(table *Table) error {
 	if r.rendered {
-		return fmt.Errorf("table already rendered")
+		return ErrTableAlreadyRendered
 	}
 
 	// Calculate column widths for auto-width columns
@@ -88,7 +86,7 @@ type Streaming struct {
 // AddRow adds a row to the streaming renderer.
 func (r *Streaming) AddRow(table *Table, row Row) error {
 	if r.rendered {
-		return fmt.Errorf("cannot add rows after table is rendered")
+		return ErrAddAfterRender
 	}
 
 	if !r.headerDone {
@@ -104,7 +102,7 @@ func (r *Streaming) AddRow(table *Table, row Row) error {
 // Render renders the streaming content, typically just the footer.
 func (r *Streaming) Render(table *Table) error {
 	if r.rendered {
-		return fmt.Errorf("table already rendered")
+		return ErrTableAlreadyRendered
 	}
 
 	// For streaming mode, just render footer
