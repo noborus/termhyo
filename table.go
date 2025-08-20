@@ -1,8 +1,22 @@
 package termhyo
 
 import (
+	"errors"
 	"io"
 	"strings"
+)
+
+var (
+	// ErrNoColumns is returned when trying to render a table with no columns defined.
+	ErrNoColumns = errors.New("no columns defined")
+	// ErrNoHeader is returned when trying to render a table without a header.
+	ErrNoHeader = errors.New("header is required")
+	// ErrNoMarkdownHeader is returned when trying to render a markdown table without a header.
+	ErrNoMarkdownHeader = errors.New("markdown table requires at least one non-empty header")
+	// ErrTableAlreadyRendered is returned when trying to render a table that has already been rendered.
+	ErrTableAlreadyRendered = errors.New("table has already been rendered")
+	// ErrAddAfterRender is returned when trying to add a row after rendering.
+	ErrAddAfterRender = errors.New("cannot add row after table has been rendered")
 )
 
 // TableOption is a functional option for configuring Table.
@@ -59,7 +73,7 @@ func (t *Table) GetAlign() bool {
 //
 // Example:
 //
-//	table := termhyo.NewTable(os.Stdout, columns, termhyo.Border(termhyo.DoubleStyle), termhyo.Align(false))
+//	table := termhyo.NewTable(os.Stdout, columns, termhyo.Border(termhyo.DoubleStyle), termhyo.AutoAlign(false))
 //
 // This is the recommended way to create and configure tables in termhyo.
 func NewTable(writer io.Writer, columns []Column, opts ...TableOption) *Table {
@@ -223,6 +237,9 @@ func (t *Table) CalculateColumnWidths() {
 
 // RenderHeader renders the table header.
 func (t *Table) RenderHeader() error {
+	if len(t.columns) == 0 {
+		return ErrNoColumns
+	}
 	// Top border (only if enabled)
 	if t.borderConfig.Top {
 		if err := t.RenderBorderLine("top"); err != nil {
