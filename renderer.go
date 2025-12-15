@@ -11,9 +11,9 @@ type Renderer interface {
 type RenderMode int
 
 const (
-	// BufferedMode: collect all rows before rendering (for auto-width)
+	// BufferedMode: collect all rows before rendering (for auto-width).
 	BufferedMode RenderMode = iota
-	// StreamingMode: render immediately (for fixed-width)
+	// StreamingMode: render immediately (for fixed-width).
 	StreamingMode
 )
 
