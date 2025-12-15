@@ -7,7 +7,7 @@ import (
 
 // ANSI escape sequences for text formatting.
 const (
-	// Text formatting
+	// Text formatting.
 	AnsiReset     = "\x1b[0m"
 	AnsiBold      = "\x1b[1m"
 	AnsiDim       = "\x1b[2m"
@@ -17,7 +17,7 @@ const (
 	AnsiReverse   = "\x1b[7m"
 	AnsiStrike    = "\x1b[9m"
 
-	// Foreground colors (text colors)
+	// Foreground colors (text colors).
 	AnsiBlack   = "\x1b[30m"
 	AnsiRed     = "\x1b[31m"
 	AnsiGreen   = "\x1b[32m"
@@ -27,7 +27,7 @@ const (
 	AnsiCyan    = "\x1b[36m"
 	AnsiWhite   = "\x1b[37m"
 
-	// Bright foreground colors
+	// Bright foreground colors.
 	AnsiBrightBlack   = "\x1b[90m"
 	AnsiBrightRed     = "\x1b[91m"
 	AnsiBrightGreen   = "\x1b[92m"
@@ -37,7 +37,7 @@ const (
 	AnsiBrightCyan    = "\x1b[96m"
 	AnsiBrightWhite   = "\x1b[97m"
 
-	// Background colors
+	// Background colors.
 	AnsiBgBlack   = "\x1b[40m"
 	AnsiBgRed     = "\x1b[41m"
 	AnsiBgGreen   = "\x1b[42m"
@@ -47,7 +47,7 @@ const (
 	AnsiBgCyan    = "\x1b[46m"
 	AnsiBgWhite   = "\x1b[47m"
 
-	// Bright background colors
+	// Bright background colors.
 	AnsiBgBrightBlack   = "\x1b[100m"
 	AnsiBgBrightRed     = "\x1b[101m"
 	AnsiBgBrightGreen   = "\x1b[102m"
@@ -115,7 +115,7 @@ func (hs HeaderStyle) ApplyStyle(text string) string {
 	}
 
 	var prefix string
-	var suffix string = AnsiReset
+	var suffix = AnsiReset
 
 	// Add custom prefix if specified
 	if hs.CustomPrefix != "" {
@@ -218,7 +218,7 @@ func (hs HeaderStyle) getSuffix() string {
 		return ""
 	}
 
-	var suffix string = AnsiReset
+	var suffix = AnsiReset
 
 	// Add custom suffix if specified
 	if hs.CustomSuffix != "" {

@@ -3,17 +3,15 @@ package termhyo
 import (
 	"regexp"
 	"strings"
-	"unicode"
 
-	"github.com/mattn/go-runewidth"
-	"golang.org/x/text/unicode/norm"
+	"github.com/rivo/uniseg"
 )
 
 // ANSI escape sequence patterns.
 var (
-	// ANSI color codes and other escape sequences
+	// ANSI color codes and other escape sequences.
 	ansiEscapeRegex = regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
-	// Other control sequences (like \r, \n, \t etc.)
+	// Other control sequences (like \r, \n, \t etc.).
 	controlCharsRegex = regexp.MustCompile(`[\x00-\x1f\x7f]`)
 )
 
@@ -44,10 +42,7 @@ func StringWidth(s string) int {
 func stringWidth(s string) int {
 	// First remove escape sequences and control characters
 	cleaned := stripEscapeSequences(s)
-
-	// Normalize the string to handle combining characters properly
-	normalized := norm.NFC.String(cleaned)
-	return runewidth.StringWidth(normalized)
+	return uniseg.StringWidth(cleaned)
 }
 
 // truncateString truncates a string to fit within the specified display width.
@@ -89,71 +84,37 @@ func truncateWithEscapes(s string, maxWidth int) string {
 
 	var result strings.Builder
 	var currentWidth int
+	gr := uniseg.NewGraphemes(s)
 
-	// Process the string character by character, handling escape sequences
-	i := 0
-	runes := []rune(s)
-
-	for i < len(runes) {
-		r := runes[i]
-
-		// Check for ANSI escape sequence
-		if r == '\x1b' && i+1 < len(runes) && runes[i+1] == '[' {
-			// Find the end of the escape sequence
-			escapeStart := i
-			i += 2 // Skip \x1b[
-
-			for i < len(runes) && !isAlpha(runes[i]) {
-				i++
-			}
-			if i < len(runes) {
-				i++ // Include the final letter
-			}
-
-			// Add the entire escape sequence to result (doesn't count toward width)
-			result.WriteString(string(runes[escapeStart:i]))
+	for gr.Next() {
+		cluster := gr.Str()
+		// Detect ANSI escape sequence
+		if strings.HasPrefix(cluster, "\x1b[") {
+			result.WriteString(cluster)
 			continue
 		}
-
-		// Handle control characters
-		if r < 0x20 || r == 0x7f {
-			if r == ' ' || r == '\t' {
-				// Count spaces and tabs toward width
+		// Detect control characters
+		runes := []rune(cluster)
+		if len(runes) == 1 && (runes[0] < 0x20 || runes[0] == 0x7f) {
+			if runes[0] == ' ' || runes[0] == '\t' {
 				if currentWidth >= maxWidth {
 					break
 				}
-				result.WriteRune(r)
+				result.WriteString(cluster)
 				currentWidth++
 			}
-			// Skip other control characters
-			i++
 			continue
 		}
-
-		// Handle combining characters
-		if unicode.Is(unicode.Mn, r) || unicode.Is(unicode.Me, r) || unicode.Is(unicode.Mc, r) {
-			result.WriteRune(r)
-			i++
-			continue
-		}
-
-		// Regular character - check if it fits
-		charWidth := runewidth.RuneWidth(r)
-		if currentWidth+charWidth > maxWidth {
+		// Normal character
+		clusterWidth := uniseg.StringWidth(cluster)
+		if currentWidth+clusterWidth > maxWidth {
 			break
 		}
-
-		result.WriteRune(r)
-		currentWidth += charWidth
-		i++
+		result.WriteString(cluster)
+		currentWidth += clusterWidth
 	}
 
 	return result.String()
-}
-
-// isAlpha returns true if the rune is an ASCII alphabetic character.
-func isAlpha(r rune) bool {
-	return (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z')
 }
 
 // padString pads a string to the specified display width with spaces.
