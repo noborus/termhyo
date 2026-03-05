@@ -77,7 +77,7 @@ func (r *MarkdownRenderer) IsRendered() bool {
 
 // renderMarkdownHeader renders the header row in Markdown format.
 func (r *MarkdownRenderer) renderMarkdownHeader(table *Table) error {
-	var line string
+	var line strings.Builder
 	var stylePrefix, styleSuffix string
 
 	// Apply header style to the entire line if configured
@@ -87,7 +87,8 @@ func (r *MarkdownRenderer) renderMarkdownHeader(table *Table) error {
 	}
 
 	// Start the line with style prefix
-	line = stylePrefix + "|"
+	line.WriteString(stylePrefix)
+	line.WriteString("|")
 
 	for _, col := range table.columns {
 		// Apply alignment to header content (headers are typically centered)
@@ -95,18 +96,21 @@ func (r *MarkdownRenderer) renderMarkdownHeader(table *Table) error {
 		if table.autoAlign {
 			content = table.formatCell(col.Title, col.Width, Center)
 		}
-		line += content + "|"
+		line.WriteString(content)
+		line.WriteString("|")
 	}
 
 	// End the line with style suffix
-	line += styleSuffix + "\n"
-	_, err := table.writer.Write([]byte(line))
+	line.WriteString(styleSuffix)
+	line.WriteString("\n")
+	_, err := table.writer.Write([]byte(line.String()))
 	return err
 }
 
 // renderMarkdownSeparator renders the separator row with alignment indicators.
 func (r *MarkdownRenderer) renderMarkdownSeparator(table *Table) error {
-	line := "|"
+	var line strings.Builder
+	line.WriteString("|")
 
 	for _, col := range table.columns {
 		separatorWidth := max(col.Width, 1)
@@ -114,17 +118,19 @@ func (r *MarkdownRenderer) renderMarkdownSeparator(table *Table) error {
 			separatorWidth += (table.padding * 2)
 		}
 		separator := r.getAlignmentSeparator(col.Align, separatorWidth)
-		line += separator + "|"
+		line.WriteString(separator)
+		line.WriteString("|")
 	}
 
-	line += "\n"
-	_, err := table.writer.Write([]byte(line))
+	line.WriteString("\n")
+	_, err := table.writer.Write([]byte(line.String()))
 	return err
 }
 
 // renderMarkdownRow renders a data row in Markdown format.
 func (r *MarkdownRenderer) renderMarkdownRow(table *Table, row Row) error {
-	line := "|"
+	var line strings.Builder
+	line.WriteString("|")
 
 	// Ensure row.Cells has at least as many elements as table.columns
 	cells := row.Cells
@@ -137,7 +143,8 @@ func (r *MarkdownRenderer) renderMarkdownRow(table *Table, row Row) error {
 
 	for i, col := range table.columns {
 		if !table.autoAlign {
-			line += cells[i].Content + "|"
+			line.WriteString(cells[i].Content)
+			line.WriteString("|")
 			continue // Skip alignment if noAlign is set
 		}
 
@@ -149,11 +156,12 @@ func (r *MarkdownRenderer) renderMarkdownRow(table *Table, row Row) error {
 		}
 		// Format cell content with alignment
 		content = table.formatCell(cells[i].Content, col.Width, cellAlign)
-		line += content + "|"
+		line.WriteString(content)
+		line.WriteString("|")
 	}
 
-	line += "\n"
-	_, err := table.writer.Write([]byte(line))
+	line.WriteString("\n")
+	_, err := table.writer.Write([]byte(line.String()))
 	return err
 }
 
