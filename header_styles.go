@@ -115,7 +115,7 @@ func (hs HeaderStyle) ApplyStyle(text string) string {
 	}
 
 	var prefix string
-	var suffix = AnsiReset
+	suffix := AnsiReset
 
 	// Add custom prefix if specified
 	if hs.CustomPrefix != "" {
@@ -218,7 +218,7 @@ func (hs HeaderStyle) getSuffix() string {
 		return ""
 	}
 
-	var suffix = AnsiReset
+	suffix := AnsiReset
 
 	// Add custom suffix if specified
 	if hs.CustomSuffix != "" {
