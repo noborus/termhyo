@@ -7,8 +7,8 @@ on:
       - main
   pull_request:
   workflow_dispatch:
-jobs:
 
+jobs:
   build:
     strategy:
       matrix:
@@ -18,10 +18,9 @@ jobs:
 
     steps:
     - name: Check out code into the Go module directory
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     - name: Install Go
-      if: success()
-      uses: actions/setup-go@v5
+      uses: actions/setup-go@v6
       with:
         go-version: ${{ matrix.go-version }}
         cache: true
