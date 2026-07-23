@@ -1,7 +1,8 @@
 # termhyo
 
+![termyho example](docs/termhyo.png)
+
 [![Go Reference](https://pkg.go.dev/badge/github.com/noborus/termhyo.svg)](https://pkg.go.dev/github.com/noborus/termhyo)
-[![Go Report Card](https://goreportcard.com/badge/github.com/noborus/termhyo)](https://goreportcard.com/report/github.com/noborus/termhyo)
 [![GitHub release](https://img.shields.io/github/release/noborus/termhyo.svg)](https://github.com/noborus/termhyo/releases)
 [![License](https://img.shields.io/github/license/noborus/termhyo.svg)](LICENSE)
 
@@ -36,6 +37,7 @@ package main
 
 import (
     "os"
+
     "github.com/noborus/termhyo"
 )
 
@@ -124,7 +126,7 @@ See the [examples](./examples) directory for more.
 ### StreamingMode
 
 - Renders immediately as rows are added
-- Automatically selected when fixed width and alignment disabled
+- Automatically selected when fixed widths are used and alignment is disabled
 - Memory efficient
 
 ## Border Styles
